@@ -1,1 +1,78 @@
 @import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  /* Gap */
+  .gap-xs {
+    @apply gap-1;
+  }
+  .gap-sm {
+    @apply gap-2;
+  }
+  .gap-md {
+    @apply gap-4;
+  }
+  .gap-lg {
+    @apply gap-8;
+  }
+  .gap-xl {
+    @apply gap-12;
+  }
+
+  /* Padding (all sides) */
+  .p-xs {
+    @apply p-1;
+  }
+  .p-sm {
+    @apply p-2;
+  }
+  .p-md {
+    @apply p-4;
+  }
+  .p-lg {
+    @apply p-8;
+  }
+  .p-xl {
+    @apply p-12;
+  }
+
+  /* Margin (all sides) */
+  .m-xs {
+    @apply m-1;
+  }
+  .m-sm {
+    @apply m-2;
+  }
+  .m-md {
+    @apply m-4;
+  }
+  .m-lg {
+    @apply m-8;
+  }
+  .m-xl {
+    @apply m-12;
+  }
+}
+
+@layer base {
+    :root, .light {
+        --neutral: #ffffff;
+        --neutral-accent: #3d4451;
+        --neutral-contrast: #000000;
+        --primary: #570df8;
+        --secondary: #f000b8;
+        --tertiary: #37cdbe;
+    }
+
+    .dark {
+        --neutral: #2A303C;
+        --neutral-accent: #191d24;
+        --neutral-contrast: #a4abb8;
+        --primary: #6419e6;
+        --secondary: #d126a4;
+        --tertiary: #1fb2a6;
+    }
+}

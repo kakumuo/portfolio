@@ -1,13 +1,16 @@
+import { Box } from '@mantine/core';
 import * as React from 'react'
+import { Link } from 'react-router';
 
-export const LookAt = ({caption, outerStyle={}, innerStyle={}, link, children}:{caption?:string, link?:string, children:any, outerStyle?:React.CSSProperties, innerStyle?:React.CSSProperties}) => {
+
+//TODO: fix lookat
+export const LookAt = (props:{caption?:any, children:any, link?:string, className?:string}) => {
     const captionRef = React.useRef<HTMLDivElement>(null); 
     const [pos, setPos] = React.useState({x:0, y:0});
     const [hoverTimeout, setHoverTimeout] = React.useState(setTimeout(()=>{}, 1))
     const HOVER_TIME = 1000 * .2
     const OFFSET = {x: 20, y: 20}; // Changed to numbers for easier calculations
 
-    const clrScheme = sampleColorSchemes[React.useContext(AppContext).schemeI];
     const [isHover, setIsHover] = React.useState({val: false})
     const [show, setShow] = React.useState(false); 
 
@@ -55,16 +58,25 @@ export const LookAt = ({caption, outerStyle={}, innerStyle={}, link, children}:{
     };
 
     return (
-        <span className='look-at'  
+        <span className={props.className}  
             onMouseEnter={handleMouseEnter} 
             onMouseLeave={handleMouseLeave} 
             onMouseMove={handleMouseMove}
         >
-            <a style={{color: clrScheme[!isHover.val ? 'fontPrimary' : 'fontAccent'].toString(), fontWeight: 'bold', textDecoration: 'none', cursor: link ? 'pointer' : 'auto', ...outerStyle}} href={link}>
-                {children}
-            </a>
-            
-            {caption && 
+            {
+                props.link ?             
+                <Link to={props.link} className={`hover:primary font-bold cursor-${props.link ? 'pointer' : 'auto'}`}>
+                    {props.children}
+                </Link>
+
+                : 
+                <Box className={`hover:primary font-bold cursor-${props.link ? 'pointer' : 'auto'}`}>
+                    {props.children}
+                </Box>
+            }
+
+
+            {/* {props.caption && 
                 <caption 
                     style={{
                         zIndex: 4,
@@ -80,10 +92,9 @@ export const LookAt = ({caption, outerStyle={}, innerStyle={}, link, children}:{
                     ref={captionRef} 
                     className={`${!show ? 'hidden' : ''} caption`}
                 >
-                    {/* {caption.match(/.*\....$/) ? <img style={{width: '100%', padding: 4}} src={caption} /> : caption} */}
-                    {caption}
+                    {props.caption}
                 </caption>
-            }
+            } */}
         </span>
     );
 };
