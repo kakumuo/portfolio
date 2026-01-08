@@ -1,18 +1,23 @@
-import { Box } from '@mantine/core';
+import { Box, Typography } from '@mantine/core';
 import * as React from 'react'
 import { Link } from 'react-router';
 
 
 //TODO: fix lookat
-export const LookAt = (props:{caption?:any, children:any, link?:string, className?:string}) => {
+export const Caption = (props:{caption?:any, children:any, link?:string, className?:string}) => {
     const captionRef = React.useRef<HTMLDivElement>(null); 
     const [pos, setPos] = React.useState({x:0, y:0});
     const [hoverTimeout, setHoverTimeout] = React.useState(setTimeout(()=>{}, 1))
-    const HOVER_TIME = 1000 * .2
-    const OFFSET = {x: 20, y: 20}; // Changed to numbers for easier calculations
+    const HOVER_DELAY_MS = 1000 * .2
+    const OFFSET = {x: 10, y: 10}; // Changed to numbers for easier calculations
 
     const [isHover, setIsHover] = React.useState({val: false})
     const [show, setShow] = React.useState(false); 
+
+
+    React.useEffect(() => {
+        console.log("Hover changed to: ", isHover)
+    }, [isHover])
 
     const handleMouseEnter = (ev:React.MouseEvent) => { 
         setIsHover({val: true})       
@@ -22,7 +27,7 @@ export const LookAt = (props:{caption?:any, children:any, link?:string, classNam
         setHoverTimeout(setTimeout(() => {
             if(!isHover.val)
                 setShow(true)
-        }, HOVER_TIME))
+        }, HOVER_DELAY_MS))
 
     }
 
@@ -58,43 +63,38 @@ export const LookAt = (props:{caption?:any, children:any, link?:string, classNam
     };
 
     return (
-        <span className={props.className}  
+        <span className={`${props.className} ${styles.container}`}  
             onMouseEnter={handleMouseEnter} 
             onMouseLeave={handleMouseLeave} 
             onMouseMove={handleMouseMove}
         >
             {
-                props.link ?             
-                <Link to={props.link} className={`hover:primary font-bold cursor-${props.link ? 'pointer' : 'auto'}`}>
+            props.link ?             
+                <Link to={props.link} className={`hover:primary cursor-${props.link ? 'pointer' : 'auto'}`}>
                     {props.children}
                 </Link>
-
                 : 
-                <Box className={`hover:primary font-bold cursor-${props.link ? 'pointer' : 'auto'}`}>
+                <Typography className={`hover:secondary cursor-${props.link ? 'pointer' : 'auto'}`}>
                     {props.children}
-                </Box>
+                </Typography>
             }
 
+            {
+                props.caption && 
+                    <Box 
+                        className={`${styles.caption}`}
+                        style={{left: pos.x, top:pos.y, visibility: show ? 'visible': 'hidden'}}
+                        ref={captionRef}
+                    >
+                        {props.caption}
+                    </Box>
+            }
 
-            {/* {props.caption && 
-                <caption 
-                    style={{
-                        zIndex: 4,
-                        top: pos.y, 
-                        left: pos.x,
-                        //TODO: use color scheme
-                        backgroundColor: "white",
-                        borderColor: "black", 
-                        color: "black",
-                        display: 'grid', 
-                        gridTemplateColumns: 'auto', gridTemplateRows: 'auto'
-                    }} 
-                    ref={captionRef} 
-                    className={`${!show ? 'hidden' : ''} caption`}
-                >
-                    {props.caption}
-                </caption>
-            } */}
         </span>
     );
 };
+
+const styles = {
+    container: `relative font-[bolder] grid`, 
+    caption: `fixed border z-4 grid grid-cols-auto grid-rows-auto`,
+}

@@ -6,5 +6,5 @@ export function Tag(props:{className?:string, text:String}){
 }
 
 const styles = {
-    container: ` border p-2`
+    container: ` border p-xs`
 }

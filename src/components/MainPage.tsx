@@ -8,5 +8,5 @@ export function MainPage(props:{children?:any}){
 }
 
 const styles = {
-    container: `border flex flex-col`
+    container: `flex flex-col`
 }

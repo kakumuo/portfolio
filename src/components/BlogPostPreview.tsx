@@ -15,7 +15,7 @@ export function BlogPostPreview(props:{blogData: BlogData}) {
 }
 
 const styles = {
-    container: `w-full grid grid-cols-1 grid-rows-auto border p-5`, 
+    container: `w-full grid grid-cols-1 grid-rows-auto border p-sm gap-sm`, 
     img: `object-contain`, 
-    footer: `flex gap-5`, 
+    footer: `flex gap-sm`, 
 }
