@@ -31,8 +31,7 @@ export function ProjectPreview(props:{className?:string, data:ProjectData}){
                 </Link>
                 : <Typography className="justify-self-start">{props.data.title}</Typography>
             }
-            <Link to={props.data.gitLink!}><Button disabled={props.data.gitLink == null}>Git</Button></Link>
-            <Link to={props.data.projectLink!}><Button disabled={props.data.projectLink == null}>Site</Button></Link>
+            <LinkButtonGroup data={props.data} />
         </Box>
         <Box className={styles.body}>
             <Caption className="float-left" caption={<StatusGridCaption data={props.data} />}>
@@ -41,6 +40,13 @@ export function ProjectPreview(props:{className?:string, data:ProjectData}){
             <p>{props.data.preview}</p>
         </Box>
         <TechMakeupBar makeup={props.data.techMakeup} />
+    </Box>
+}
+
+export function LinkButtonGroup(props:{data:ProjectData}) {
+    return <Box className="flex">
+        <Link to={props.data.gitLink!}><Button disabled={props.data.gitLink == null}>Git</Button></Link>
+        <Link to={props.data.projectLink!}><Button disabled={props.data.projectLink == null}>Site</Button></Link>
     </Box>
 }
 
@@ -58,7 +64,7 @@ function StatusGridCaption(props:{data:ProjectData}) {
     </Box>
 }
 
-function TechMakeupBar(props:{makeup:TechMakeup}) {
+export function TechMakeupBar(props:{makeup:TechMakeup}) {
     return <Box className={styles.TMB.container}>
         {props.makeup.map((cur, curI) => 
             <Typography key={curI} className={styles.TMB.item} style={{flex: cur.percent}}>{`${cur.tech} (${cur.percent}%)`}</Typography>
@@ -66,7 +72,7 @@ function TechMakeupBar(props:{makeup:TechMakeup}) {
     </Box>
 }
 
-function StatusGrid(props:{data:ProjectData}){
+export function StatusGrid(props:{data:ProjectData,  className?:string}){
     const chars = React.useMemo(() => {
         const output:string[] = [];
         const data = props.data; 
@@ -86,7 +92,7 @@ function StatusGrid(props:{data:ProjectData}){
         return output; 
     }, [props.data]);
     
-    return <Box className={styles.SG.container}>
+    return <Box className={`${styles.SG.container} ${props.className}`}>
         {chars.map((c, cI) => <Typography className={styles.SG.item} key={cI}>{c}</Typography>)}
     </Box>
 }

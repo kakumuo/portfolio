@@ -3,34 +3,28 @@ import { Caption } from "../components/Caption";
 import { ProjectPreview } from "../components/ProjectPreview";
 import  { SectionHeader } from "../components/SectionHeader";
 import { projects } from "../sampleData";
+import { MainPage } from "../components/MainPage";
+import { SearchBar } from "../components/SearchBar";
 
 
 export function ProjectsPage(){
-    return <Box className={styles.container}>
+    return <MainPage>
         <SectionHeader  title="Projects">
             <Caption className={styles.projectHelp}>
                 <Typography className={styles.projectHelp}>[?]</Typography>
             </Caption>
         </SectionHeader>
 
-        <Box className={styles.searchContainer}>
-            <Input />
-            <Box className={styles.searchFilter}>
-
-            </Box>
-        </Box>
+        <SearchBar />
 
         <Box className={styles.projectsSection}>
             {projects.map((proj, projI) => <ProjectPreview data={proj} key={projI} />)}
         </Box>
-    </Box>
+    </MainPage>
 }
 
 
 const styles = {
-    container: `flex flex-col gap-lg`, 
-    searchContainer: `grid`, 
-    searchFilter: `grid`, 
     projectsSection: `w-full grid gap-lg`, 
     projectHelp: `justify-self-end`,
 }

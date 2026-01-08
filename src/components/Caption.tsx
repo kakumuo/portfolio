@@ -3,7 +3,6 @@ import * as React from 'react'
 import { Link } from 'react-router';
 
 
-//TODO: fix lookat
 export const Caption = (props:{caption?:any, children:any, link?:string, className?:string}) => {
     const captionRef = React.useRef<HTMLDivElement>(null); 
     const [pos, setPos] = React.useState({x:0, y:0});
@@ -70,11 +69,11 @@ export const Caption = (props:{caption?:any, children:any, link?:string, classNa
         >
             {
             props.link ?             
-                <Link to={props.link} className={`hover:primary cursor-${props.link ? 'pointer' : 'auto'}`}>
+                <Link to={props.link} className={`hover:text-primary cursor-${props.link ? 'pointer' : 'auto'}`}>
                     {props.children}
                 </Link>
                 : 
-                <Typography className={`hover:secondary cursor-${props.link ? 'pointer' : 'auto'}`}>
+                <Typography className={`hover:text-primary cursor-${props.link ? 'pointer' : 'auto'}`}>
                     {props.children}
                 </Typography>
             }

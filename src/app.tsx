@@ -6,7 +6,8 @@ import { Link } from "react-router";
 import { IconGithub, IconGoodReads, IconLeetCode, IconLinkedIn, IconMAL } from "./components/Icons";
 import { headerLinks } from './sampleData';
 import { ProjectsPage } from './pages/ProjectsPage';
-import { PostPage } from './pages/ProjectPostPage';
+import { PostPage } from './pages/PostPage';
+import { BlogPage } from './pages/BlogPage';
 
 const footerLinks:{label:string, link:string, icon:React.JSX.Element}[] = [
     {label: "LinkedIn", link: "https://www.linkedin.com/in/kevin-akumuo/", icon: <IconLinkedIn className="w-5 h-5" /> },
@@ -25,6 +26,9 @@ export function App() {
                 <Route path='/' Component={HomePage}/>
                 <Route path='/projects' Component={ProjectsPage}/>
                 <Route path='/projects/:project_id' Component={PostPage}/>
+                <Route path='/blog' Component={BlogPage}/>
+                <Route path='/blog/:blog_id' Component={PostPage}/>
+                <Route path='/blog/about' Component={PostPage} />
             </Routes>
             <PageFooter />
         </BrowserRouter>

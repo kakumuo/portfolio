@@ -2,9 +2,9 @@ import type { BlogData } from "./components/BlogPostPreview";
 import type { ProjectData } from "./components/ProjectPreview";
 
 export const sampleBlogData:BlogData[] = [
-    {title: "Some Title", preview: "liquet sem sem ac justo. Duis ex magna, commodo a dui in, ornare facilisis urna. Vestibulum dapibus pellentesque orci efficitur efficitur.", tags:["tagA", "tagB"], created: "23h ago", imgPath: "https://placehold.co/600x400/png" },
-    {title: "Some Title", preview: "liquet sem sem ac justo. Duis ex magna, commodo a dui in, ornare facilisis urna. Vestibulum dapibus pellentesque orci efficitur efficitur.", tags:["tagC", "tagD"], created: "23h ago", imgPath: "https://placehold.co/600x400/png" },
-    {title: "Some Title", preview: "liquet sem sem ac justo. Duis ex magna, commodo a dui in, ornare facilisis urna. Vestibulum dapibus pellentesque orci efficitur efficitur.", tags:["tagE", "tagF"], created: "23h ago", imgPath: "https://placehold.co/600x400/png" }
+    {title: "Some Title", preview: "liquet sem sem ac justo. Duis ex magna, commodo a dui in, ornare facilisis urna. Vestibulum dapibus pellentesque orci efficitur efficitur.", tags:["tagA", "tagB"], created: new Date(), imgPath: "https://placehold.co/600x400/png", path: "234" },
+    {title: "Some Title", preview: "liquet sem sem ac justo. Duis ex magna, commodo a dui in, ornare facilisis urna. Vestibulum dapibus pellentesque orci efficitur efficitur.", tags:["tagC", "tagD"], created: new Date(), imgPath: "https://placehold.co/600x400/png", path: "234"  },
+    {title: "Some Title", preview: "liquet sem sem ac justo. Duis ex magna, commodo a dui in, ornare facilisis urna. Vestibulum dapibus pellentesque orci efficitur efficitur.", tags:["tagE", "tagF"], created: new Date(), imgPath: "https://placehold.co/600x400/png", path: "234"  }
 ]
 
 export const projects: ProjectData[] = [
@@ -16,7 +16,7 @@ export const projects: ProjectData[] = [
     taskSize: "small",
     complexity: "low",
     status: "completed",
-    postLink: "/projects/12345", 
+    postLink: "/projects/ai-chat-assistant", 
     // gitLink: "https://github.com/example/ai-chat-assistant",
     // projectLink: "https://aiassistant.demo.app",
     preview: "An AI-powered chat app that integrates OpenAI's API to deliver intelligent real-time responses with a polished React UI.",
@@ -51,7 +51,7 @@ export const projects: ProjectData[] = [
 
 export const headerLinks:{label:string, link:string}[] = [
     {label: "Home", link: "/"},
-    {label: "About", link: "/about"},
+    {label: "About", link: "/blog/about"},
     {label: "Projects", link: "/projects"},
     {label: "Blog", link: "/blog"},
     {label: "Contact", link: "/contact"},

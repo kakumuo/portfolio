@@ -14,13 +14,13 @@ export function formatDate(date:Date, relative:boolean = false) {
     const diffDays = Math.floor(diffHours / 24);
 
     if (diffSeconds < 60) {
-      return `${diffSeconds} sec${diffSeconds > 1 && 's'} ago`;
+      return `${diffSeconds} sec${diffSeconds > 1 ? 's' : ''} ago`;
     } else if (diffMinutes < 60) {
-      return `${diffMinutes} min${diffMinutes > 1 && 's'} ago`;
+      return `${diffMinutes} min${diffMinutes > 1 ? 's' : ''} ago`;
     } else if (diffHours < 24) {
-      return `${diffHours} hr${diffHours > 1 && 's'} ago`;
+      return `${diffHours} hr${diffHours > 1 ? 's' : ''} ago`;
     } else {
-      return `${diffDays} day${diffDays > 1 && 's'} ago`;
+      return `${diffDays} day${diffDays > 1  ? 's' : ''} ago`;
     }
   }
 

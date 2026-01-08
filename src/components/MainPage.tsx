@@ -1,8 +1,8 @@
 import { Box } from "@mantine/core";
 
 
-export function MainPage(props:{children?:any}){
-    return <Box className={styles.container}>
+export function MainPage(props:{children?:any, className?:string}){
+    return <Box className={`${styles.container} ${props.className}`}>
         {props.children}
     </Box>
 }
