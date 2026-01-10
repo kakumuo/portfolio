@@ -30,8 +30,12 @@ const footerLinks:{label:string, link:string, icon:React.JSX.Element}[] = [
 ];
 
 
+export type PreloadMap = {[key:string]:{data:any, retriveTime:number}}
+
 type AppContextData = {
-    client:PortfolioClient
+    client:PortfolioClient,
+    preload:PreloadMap, 
+    setPreload:React.Dispatch<PreloadMap>
 }
 
 export const AppContext = React.createContext(null! as AppContextData); 
@@ -40,8 +44,9 @@ export const AppContext = React.createContext(null! as AppContextData);
 //TODO: fix tailwind theme config
 export function App() {
     const [client, _] = React.useState(new PortfolioClient()); 
+    const [preload, setPreload] = React.useState({} as PreloadMap)
 
-    return <AppContext value={{client}}>
+    return <AppContext value={{client, preload, setPreload}}>
         <Box className={styles.container}>
             <BrowserRouter>
                 <PageHeader showFooter />

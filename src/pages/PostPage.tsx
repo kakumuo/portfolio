@@ -129,53 +129,68 @@ Improves organic reach and ranking performance.
   }
 ]
 
-
+export type PostPageData = {
+    isProject:boolean, 
+    headerData:ProjectHeader | BlogHeader, 
+    postData:PostData, 
+    postChangelog:GitRevision[], 
+    projChangelog:GitRevision[],
+}
 
 export function PostPage() {
     const params = useParams(); 
     const location = useLocation(); 
-    const [isProject, setIsProject] = React.useState(true);  
-    const {client} = React.useContext(AppContext); 
-    const [headerData, setHeaderData] = React.useState(null! as ProjectHeader | BlogHeader); 
-    const [postData, setPostData] = React.useState({} as PostData); 
-    const [postChangelog, setPostChangelog] = React.useState([] as GitRevision[]); 
-    const [projChangelog, setProjChangelog] = React.useState([] as GitRevision[]); 
+    const [pageData, setPageData] = React.useState({} as PostPageData); 
+    const {client, preload} = React.useContext(AppContext)
 
     React.useEffect(() => {
-        const isProject = location.pathname.includes("/projects/"); 
-        setIsProject(isProject); 
+        console.log(preload); 
+        console.log(location.pathname)
 
-        ; (async() => {            
-            const headerResp = isProject ? (await client.getProjectHeader({})) : (await client.getBlogHeader({}))
-            const targetData = headerResp.find(val => val.id == params.id); 
-            if(targetData) setHeaderData(targetData); 
+        if(Object.hasOwn(preload, location.pathname) && preload[location.pathname] && preload[location.pathname].data) {
+            console.log("postpage - retreving data")
+            setPageData(preload[location.pathname].data as any)
+        } else {
+            console.log("postpage - pulling data")
+            ;(async() => {     
+                const pageData:PostPageData = {} as PostPageData; 
+                pageData.isProject = location.pathname.includes("/projects/");      
 
-            if(params.id) {
-                const postResp = await client.getPostData({id: params.id})
-                if(postResp.length > 0) setPostData(postResp[0]); 
+                const headerResp = pageData.isProject ? (await client.getProjectHeader({})) : (await client.getBlogHeader({}))
+                const targetData = headerResp.find(val => val.id == params.id); 
+                if(targetData) pageData.headerData = targetData; 
 
-                const postChangelogResp = await client.getPostChangelog({id: params.id}); 
-                setPostChangelog(postChangelogResp);
-            }
+                // handle calls async
+                if(params.id) {
+                    let resp:any; 
+                    resp = await client.getPostData({id: params.id})
+                    if(resp.length > 0) pageData.postData = resp[0];
 
-            if((targetData as ProjectHeader).git) {
-                const projChangelogResp = await client.getProjectChangelog({link: (targetData as ProjectHeader).git!})
-                setProjChangelog(projChangelogResp)
-            }
-        })(); 
+                    resp = await client.getPostChangelog({id: params.id})
+                    pageData.postChangelog = resp;
+                }
+
+                if((targetData as ProjectHeader).git) {
+                    let resp = await client.getProjectChangelog({link: (targetData as ProjectHeader).git!})
+                    pageData.projChangelog = resp; 
+                }
+
+                setPageData(pageData); 
+            })(); 
+        }
     }, [location]); 
 
     return <MainPage className={styles.container}>
 
-        {!headerData || !postData ? 
+        {!pageData.headerData || !pageData.postData ? 
             <Skeleton variant='text' /> 
             :<>
-                {isProject ? <ProjectBanner data={headerData as ProjectHeader} />: <BlogBanner data={headerData as BlogHeader} />}
+                {pageData.isProject ? <ProjectBanner data={pageData.headerData as ProjectHeader} />: <BlogBanner data={pageData.headerData as BlogHeader} />}
                 <Box className={styles.body}>
-                    <Markdown components={mdStyle} remarkPlugins={[remarkGfm]}>{postData.postContent}</Markdown>
+                    <Markdown components={mdStyle} remarkPlugins={[remarkGfm]}>{pageData.postData.postContent}</Markdown>
                 </Box>  
-                {isProject && <ChangeLog title='Project ChangeLog' revisions={projChangelog} />}
-                <ChangeLog title='Post ChangeLog' revisions={postChangelog} />
+                {pageData.isProject && <ChangeLog title='Project ChangeLog' revisions={pageData.projChangelog} />}
+                <ChangeLog title='Post ChangeLog' revisions={pageData.postChangelog} />
             </>
         }
     </MainPage>

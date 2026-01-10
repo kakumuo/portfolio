@@ -22,18 +22,19 @@ export function ProjectsPage(){
     }, [])
 
     return <MainPage>
-        <SectionHeader  title="Projects">
-            <Caption className={styles.projectHelp}>
-                <Typography className={styles.projectHelp}>[?]</Typography>
-            </Caption>
-        </SectionHeader>
+            <SectionHeader  title="Projects">
+                <Caption className={styles.projectHelp}>
+                    <Typography className={styles.projectHelp}>[?]</Typography>
+                </Caption>
+            </SectionHeader>
 
-        <SearchBar />
+            <SearchBar />
 
-        <Box className={styles.projectsSection}>
-            {projectHeaders.map((proj, projI) => <ProjectPreview data={proj} key={projI} />)}
-        </Box>
-    </MainPage>
+            <Box className={styles.projectsSection}>
+                {projectHeaders.map((proj, projI) => <ProjectPreview data={proj} key={projI} />)}
+            </Box>
+        </MainPage>
+    
 }
 
 
