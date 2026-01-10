@@ -1,6 +1,6 @@
 
 
-export function formatDate(date:Date, relative:boolean = false) {
+export function formatDate(date:Date|number, relative:boolean = false) {
   const targetDate = new Date(date);
   if (isNaN(targetDate.getTime())) {
     throw new Error("Invalid date input");

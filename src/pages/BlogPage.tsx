@@ -1,9 +1,22 @@
+import React from "react"
+
 import { Box, Divider, Typography } from "@mantine/core"
 import { BlogPostPreview } from "../components/BlogPostPreview"
 import { SearchBar } from "../components/SearchBar"
-import { sampleBlogData } from "../sampleData"
+import { AppContext } from "../app"
+import type { BlogHeader } from "../components/types"
 
 export function BlogPage() {
+    const {client} = React.useContext(AppContext)
+    const [blogData, setBlogData] = React.useState([] as BlogHeader[])
+
+    React.useEffect(() => {
+        (async() => {
+            const resp = await client.getBlogHeader({});
+            setBlogData(resp);  
+        })(); 
+    }, [])
+
     return <Box className={styles.container}>
         <Box className={styles.header.container}>
             <Typography>Blog</Typography>
@@ -13,7 +26,7 @@ export function BlogPage() {
         <Box className={styles.body.container}>
             <Box className={styles.body.main}> 
                 <BlogSection title="April 2025">
-                    {sampleBlogData.map((data, dataI) => <BlogPostPreview blogData={data} key={dataI} />)}
+                    {blogData.map((data, dataI) => <BlogPostPreview blogData={data} key={dataI} />)}
                 </BlogSection>
 
                 <BlogSection title="June 2024" />

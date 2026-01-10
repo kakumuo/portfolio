@@ -13,11 +13,6 @@ export const Caption = (props:{caption?:any, children:any, link?:string, classNa
     const [isHover, setIsHover] = React.useState({val: false})
     const [show, setShow] = React.useState(false); 
 
-
-    React.useEffect(() => {
-        console.log("Hover changed to: ", isHover)
-    }, [isHover])
-
     const handleMouseEnter = (ev:React.MouseEvent) => { 
         setIsHover({val: true})       
         updateCaptionPosition(ev.clientX, ev.clientY);

@@ -1,13 +1,25 @@
-import {Box, Button, Divider, Typography} from '@mantine/core'; 
+import * as React from 'react'
+
+import {Box, Button, Divider, Portal, Typography} from '@mantine/core'; 
 import { HomePage } from './pages/HomePage';
 import { BrowserRouter, Route, Routes } from 'react-router';
 
 import { Link } from "react-router";
 import { IconGithub, IconGoodReads, IconLeetCode, IconLinkedIn, IconMAL } from "./components/Icons";
-import { headerLinks } from './sampleData';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { PostPage } from './pages/PostPage';
 import { BlogPage } from './pages/BlogPage';
+import { PortfolioClient } from './components/PortfolioClient';
+
+
+
+const headerLinks:{label:string, link:string}[] = [
+    {label: "Home", link: "/"},
+    {label: "About", link: "/blog/about-me"},
+    {label: "Projects", link: "/projects"},
+    {label: "Blog", link: "/blog"},
+    {label: "Contact", link: "/contact"},
+];
 
 const footerLinks:{label:string, link:string, icon:React.JSX.Element}[] = [
     {label: "LinkedIn", link: "https://www.linkedin.com/in/kevin-akumuo/", icon: <IconLinkedIn className="w-5 h-5" /> },
@@ -17,22 +29,33 @@ const footerLinks:{label:string, link:string, icon:React.JSX.Element}[] = [
     {label: "MyMangaList", link: "https://myanimelist.net/mangalist/foxfen64?status=2&order=4&order2=0", icon: <IconMAL className="w-5 h-5" />},
 ];
 
+
+type AppContextData = {
+    client:PortfolioClient
+}
+
+export const AppContext = React.createContext(null! as AppContextData); 
+
+
 //TODO: fix tailwind theme config
 export function App() {
-    return <Box className={styles.container}>
-        <BrowserRouter>
-            <PageHeader showFooter />
-            <Routes>
-                <Route path='/' Component={HomePage}/>
-                <Route path='/projects' Component={ProjectsPage}/>
-                <Route path='/projects/:project_id' Component={PostPage}/>
-                <Route path='/blog' Component={BlogPage}/>
-                <Route path='/blog/:blog_id' Component={PostPage}/>
-                <Route path='/blog/about' Component={PostPage} />
-            </Routes>
-            <PageFooter />
-        </BrowserRouter>
-    </Box>
+    const [client, _] = React.useState(new PortfolioClient()); 
+
+    return <AppContext value={{client}}>
+        <Box className={styles.container}>
+            <BrowserRouter>
+                <PageHeader showFooter />
+                <Routes>
+                    <Route path='/' Component={HomePage}/>
+                    <Route path='/projects' Component={ProjectsPage}/>
+                    <Route path='/projects/:id' Component={PostPage}/>
+                    <Route path='/blog' Component={BlogPage}/>
+                    <Route path='/blog/:id' Component={PostPage}/>
+                </Routes>
+                <PageFooter />
+            </BrowserRouter>
+        </Box>
+    </AppContext>
 }
 
 const styles = {

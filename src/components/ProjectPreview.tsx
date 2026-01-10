@@ -3,30 +3,14 @@ import React from "react";
 import { data, Link } from "react-router"
 import { Caption } from "./Caption";
 import { formatDate } from "./Utils";
+import type { MakeupLayer, ProjectHeader } from "./types";
 
-type TechMakeup = {tech:string, percent:number}[]
-
-export type ProjectData = {
-    title:string, 
-    startDate:Date, 
-    endDate:Date, 
-    type:string, 
-    taskSize:string, 
-    complexity:string, 
-    status:string, 
-    gitLink?:string, 
-    projectLink?:string, 
-    postLink?:string,
-    preview:string,
-    techMakeup:TechMakeup
-}
-
-export function ProjectPreview(props:{className?:string, data:ProjectData}){
+export function ProjectPreview(props:{className?:string, data:ProjectHeader}){
     return <Box className={styles.container}>
         <Box className={styles.header}>
             {
-                props.data.postLink ?
-                <Link className="justify-self-start" to={props.data.postLink}>
+                props.data.hasPost ?
+                <Link className="justify-self-start" to={`/projects/${props.data.id}`}>
                     <Typography>{props.data.title}</Typography>
                 </Link>
                 : <Typography className="justify-self-start">{props.data.title}</Typography>
@@ -37,20 +21,20 @@ export function ProjectPreview(props:{className?:string, data:ProjectData}){
             <Caption className="float-left" caption={<StatusGridCaption data={props.data} />}>
                 <StatusGrid data={props.data} />
             </Caption>
-            <p>{props.data.preview}</p>
+            <p>{props.data.summary}</p>
         </Box>
-        <TechMakeupBar makeup={props.data.techMakeup} />
+        <TechMakeupBar makeup={props.data.makeupLayers} />
     </Box>
 }
 
-export function LinkButtonGroup(props:{data:ProjectData}) {
+export function LinkButtonGroup(props:{data:ProjectHeader}) {
     return <Box className="flex">
-        <Link to={props.data.gitLink!}><Button disabled={props.data.gitLink == null}>Git</Button></Link>
-        <Link to={props.data.projectLink!}><Button disabled={props.data.projectLink == null}>Site</Button></Link>
+        <Link to={props.data.git!}><Button disabled={props.data.git == null}>Git</Button></Link>
+        <Link to={props.data.url!}><Button disabled={props.data.url == null}>Site</Button></Link>
     </Box>
 }
 
-function StatusGridCaption(props:{data:ProjectData}) {
+function StatusGridCaption(props:{data:ProjectHeader}) {
     return <Box className={styles.SG.captionContainer}>
         {/* TODO: depending on whether having display in the container, remove "captionText" */}
         <Box className={styles.SG.captionText}>
@@ -64,30 +48,40 @@ function StatusGridCaption(props:{data:ProjectData}) {
     </Box>
 }
 
-export function TechMakeupBar(props:{makeup:TechMakeup}) {
+export function TechMakeupBar(props:{makeup:MakeupLayer[]}) {
     return <Box className={styles.TMB.container}>
-        {props.makeup.map((cur, curI) => 
-            <Typography key={curI} className={styles.TMB.item} style={{flex: cur.percent}}>{`${cur.tech} (${cur.percent}%)`}</Typography>
-        )}
+        {
+            props.makeup.map((layer, layerI) => 
+                <Box className={styles.TMB.list} key={layerI}>  
+                    <Typography>{layer.name}</Typography>
+                    {layer.items.map((cur, curI) => 
+                        <Typography key={curI} className={styles.TMB.item} style={{flex: cur.percentage}}>{`${cur.tech} (${cur.percentage}%)`}</Typography>
+                    )}
+                </Box>
+            )
+        }
+
     </Box>
 }
 
-export function StatusGrid(props:{data:ProjectData,  className?:string}){
+export function StatusGrid(props:{data:ProjectHeader,  className?:string}){
     const chars = React.useMemo(() => {
         const output:string[] = [];
         const data = props.data; 
+        const startDate = new Date(data.startDate); 
+        const endDate = new Date(data.endDate); 
 
-        output.push(...Math.round(data.startDate.getFullYear() % 100).toString().padStart(2, "0").split(""));
-        output.push(...Math.round(data.endDate.getFullYear() % 100).toString().padStart(2, "0").split(""));
+        output.push(...Math.round(startDate.getFullYear() % 100).toString().padStart(2, "0").split(""));
+        output.push(...Math.round(endDate.getFullYear() % 100).toString().padStart(2, "0").split(""));
 
-        output.push(...(data.startDate.getMonth()).toString().padStart(2, "0").split(""));
-        output.push(...(data.endDate.getMonth()).toString().padStart(2, "0").split(""));
+        output.push(...(startDate.getMonth()).toString().padStart(2, "0").split(""));
+        output.push(...(endDate.getMonth()).toString().padStart(2, "0").split(""));
 
-        output.push(...(data.startDate.getDate()).toString().padStart(2, "0").split(""));
-        output.push(...(data.endDate.getDate()).toString().padStart(2, "0").split(""));
+        output.push(...(startDate.getDate()).toString().padStart(2, "0").split(""));
+        output.push(...(endDate.getDate()).toString().padStart(2, "0").split(""));
 
         output.push(data.type[0], data.taskSize[0], data.complexity[0], data.status[0]);
-        console.log(data.startDate.getDate()); 
+        console.log(startDate.getDate()); 
 
         return output; 
     }, [props.data]);
@@ -114,7 +108,8 @@ const styles = {
         captionText: `grid grid-rows-auto grid-cols-2`, 
     }, 
     TMB: {
-        container: `flex border`, 
+        container: `grid`, 
+        list: `border grid grid-cols-[auto_repeat(auto-fill, 1fr)] grid-rows-1`, 
         item: `border text-center`
     }
 }

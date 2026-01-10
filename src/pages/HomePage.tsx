@@ -1,15 +1,32 @@
-import { Box, Text, Typography } from "@mantine/core";
+import * as React from 'react'; 
+
+import { Box, Typography } from "@mantine/core";
 import { MainPage } from "../components/MainPage";
 import { SectionHeader } from "../components/SectionHeader";
-import { BlogPostPreview, type BlogData } from "../components/BlogPostPreview";
-import { ProjectPreview, type ProjectData } from "../components/ProjectPreview";
+import { BlogPostPreview } from "../components/BlogPostPreview";
+import { ProjectPreview } from "../components/ProjectPreview";
 import { Caption } from "../components/Caption";
-import { projects, sampleBlogData } from "../sampleData";
-
-
+import { AppContext } from "../app";
+import type { BlogHeader, ProjectHeader } from '../components/types';
 
 
 export function HomePage(){
+    const {client} = React.useContext(AppContext); 
+    const [featuredBlogData, setFeaturedBlogData] = React.useState([] as BlogHeader[]); 
+    const [featuredProjData, setFeaturedProjData] = React.useState([] as ProjectHeader[]); 
+
+    React.useEffect(() => {
+        (async() => {
+            const blogData = await client.getBlogHeader({});
+            const blogRes = blogData.sort((a, b) => b.createDate - a.createDate).filter((_, i) => i < 3); 
+            setFeaturedBlogData(blogRes); 
+
+            const projData = await client.getProjectHeader({}); 
+            const projRes = projData.sort((a, b) => b.endDate - a.endDate).filter((_, i) => i < 3); 
+            setFeaturedProjData(projRes); 
+        })(); 
+    }, []); 
+
     return <MainPage>
         <Typography className={styles.textheader}>
             I am an experienced software developer with a strong background in Backend and ETL development. Currently working as a Applicaiton Developer II at UPS, where I've been instrumental in developing and improving critical processes for managing large-scale customer data.
@@ -18,9 +35,8 @@ export function HomePage(){
 
         <SectionHeader title="Featured Posts" more={{label: "More Posts", link: "/blog"}} />
         <Box className={styles.blogCarousel}>
-            {sampleBlogData.map((data, dataI) => <BlogPostPreview key={dataI} blogData={data}/>)}
+            {featuredBlogData.map((data, dataI) => <BlogPostPreview key={dataI} blogData={data}/>)}
         </Box>
-
         
         <SectionHeader  title="Projects" more={{label: "More Projects", link: "/projects"}}>
             <Caption className={styles.projectHelp}>
@@ -28,7 +44,7 @@ export function HomePage(){
             </Caption>
         </SectionHeader>
         <Box className={styles.projectsSection}>
-            {projects.map((proj, projI) => <ProjectPreview data={proj} key={projI} />)}
+            {featuredProjData.map((proj, projI) => <ProjectPreview data={proj} key={projI} />)}
         </Box>
 
     </MainPage>
