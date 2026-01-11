@@ -79,8 +79,7 @@ export class PortfolioClient {
         return this.getHeaderData({ids, type: 'project'}) as Promise<ProjectHeader[]>
     }
 
-     //TODO: maybe set this to just the value instead of the array if not making use of array
-    async getPostData({id}:{id:string}) : Promise<PostData[]>{
+    async getPostData({id}:{id:string}) : Promise<PostData>{
         const resp = await this.octokit.rest.repos.getContent({
             owner: OWNER, 
             repo: BLOG_REPO, 
@@ -89,7 +88,7 @@ export class PortfolioClient {
 
         if(resp.status != 200) {
             this.debug("error", `Unable to get post repo content`, resp.data); 
-            return []; 
+            return {} as PostData; 
         }
 
         const postData:PostData = {
@@ -114,7 +113,7 @@ export class PortfolioClient {
             }
         }
 
-        return [postData]; 
+        return postData; 
     }
 
     async getPostChangelog({id}:{id:string}){
@@ -155,8 +154,16 @@ export class PortfolioClient {
         return commits; 
     }
 
-    async getProjectChangelog({link}:{link:string}){
-        const linkpath = link.split("/").reverse(); 
+    async getProjectChangelog({linkOrId}:{linkOrId:string}){
+        let targetLink = linkOrId; 
+        if(!linkOrId.match(/.*github\.com/)) {
+            const header = await this.getProjectHeader({ids: [linkOrId]})
+            if(!header[0].git) return []
+            
+            targetLink = header[0].git; 
+        }
+
+        const linkpath = targetLink.split("/").reverse(); 
         const owner = linkpath[1]; 
         const repo = linkpath[0]; 
 

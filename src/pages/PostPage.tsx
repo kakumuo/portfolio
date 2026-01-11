@@ -3,189 +3,86 @@ import { Box, Divider, Skeleton, Typography } from "@mantine/core";
 import { Link, useLocation, useParams } from "react-router";
 import { MainPage } from "../components/MainPage";
 import { LinkButtonGroup, StatusGrid, TechMakeupBar } from "../components/ProjectPreview";
-import { formatDate } from '../components/Utils';
+import { formatDate, resolvePreload } from '../components/Utils';
 import Markdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import type { GitRevision, ProjectHeader, BlogHeader, PostData } from '../components/types';
+import { type GitRevision, type ProjectHeader, type BlogHeader, type PostPageData, type Preload } from '../components/types';
 import { AppContext } from '../app';
+import type { PortfolioClient } from '../components/PortfolioClient';
+
+/*
+
+export async function loadPostPage(client:PortfolioClient, data:Preload<PostPageData>, targetId?:string) {
+    const pageData:PostPageData = {} as PostPageData; 
+    pageData.isProject = location.pathname.includes("/projects/");      
+
+    let targetData; 
+    if(!data.headerData) {
+        const headerResp = pageData.isProject ? (await client.getProjectHeader({})) : (await client.getBlogHeader({}))
+        targetData = headerResp.find(val => val.id == targetId); 
+        if(targetData) pageData.headerData = targetData; 
+    }
+
+    // handle calls async
+    if(!data.postData && targetId) {
+        client.getPostData({id: targetId}).
+            then(resp => resp.length > 0 && (pageData.postData = resp[0]))
+
+    if(!data.postChangelog && targetId)
+        client.getPostChangelog({id: targetId})
+            .then(resp => pageData.postChangelog = resp); 
+    }
+
+    if(!data.projChangelog && (targetData as ProjectHeader).git) {
+        client.getProjectChangelog({link: (targetData as ProjectHeader).git!})
+            .then(resp => (pageData.projChangelog = resp)); 
+    }
+
+    return pageData
+}
+*/
 
 
+export function loadPostPage(client:PortfolioClient, data:Preload<PostPageData>, isProject:boolean, id:string) {
+    data.isProject = new Promise((resolve, _) => resolve(isProject)); 
+    data.headerData = isProject ? client.getProjectHeader({ids:[id]}) : client.getBlogHeader({ids:[id]}); 
+    data.postData = client.getPostData({id: id})
+    data.postChangelog = client.getPostChangelog({id: id})
+    if(isProject)
+        data.projChangelog = client.getProjectChangelog({linkOrId: id})
 
-
-const changelog: GitRevision[] = [
-  {
-    id: "a1b2c3d",
-    url: "a1b2c3d",
-    title: "Add authentication middleware",
-    date: 1,
-    body: `
-### Added
-- Implemented **JWT-based authentication middleware** to secure API routes.
-- Introduced new endpoints:
-  - \`/login\`
-  - \`/logout\`
-
-### Details
-This update enhances security by requiring valid tokens for all protected routes.
-`
-  },
-  {
-    id: "d4e5f6g",
-    url: "d4e5f6g",
-    title: "Fix memory leak in data parser",
-    date: 1,
-    body: `
-### Fixed
-- Resolved a **memory leak** in the XML data parser caused by improper buffer cleanup.
-- Improved parser efficiency by approximately **20%**.
-
-### Code Snippet
-\`\`\`ts
-parser.cleanupBuffers()
-\`\`\`
-`
-  },
-  {
-    id: "h7i8j9k",
-    url: "h7i8j9k",
-    title: "Improve dashboard UI",
-    date: 1,
-    body: `
-### Updated
-- Refreshed **color scheme** for a modern look.
-- Fixed alignment issues on main dashboard cards.
-- Added **responsive grid** support for mobile devices.
-
-### Preview
-*The new layout improves user experience and accessibility.*
-`
-  }
-]
-
-const blogChangelog: GitRevision[] = [
-  {
-    id: "r1v2b3n",
-    url: "r1v2b3n",
-    title: "Initial draft of 'AI in Everyday Life'",
-    date: 1,
-    body: `
-### Created
-- Wrote the **first draft** of the post: *AI in Everyday Life*.
-- Added structure with:
-  - Introduction
-  - Overview of real-world applications
-  - Placeholder sections for case studies
-
-### Notes
-This is an early draft intended for concept validation.
-`
-  },
-  {
-    id: "c4x5z6a",
-    url: "c4x5z6a",
-    title: "Added images and formatting",
-    date: 1,
-    body: `
-### Updated
-- Inserted relevant **images** illustrating AI in consumer devices.
-- Improved **Markdown formatting** for better readability.
-- Adjusted **heading hierarchy** and fixed spacing issues.
-
-### Example
-\`\`\`md
-## Examples of AI in Daily Life
-\`\`\`
-`
-  },
-  {
-    id: "m7n8b9v",
-    url: "m7n8b9v",
-    title: "SEO optimization and metadata",
-    date: 1,
-    body: `
-### Added
-- Configured **meta descriptions** and improved titles for search visibility.
-- Enhanced internal linking between related technology articles.
-- Refined headings to include popular **search keywords**.
-
-### Benefit
-Improves organic reach and ranking performance.
-`
-  },
-  {
-    id: "x1y2z3k",
-    url: "x1y2z3k",
-    title: "Final review and publication",
-    date: 1,
-    body: `
-### Completed
-- Performed final **grammar and style** review.
-- Finalized section structure and verified image attributions.
-- Published *AI in Everyday Life* under the **Technology** category.
-
-### Status
-✅ Post published successfully on January 8, 2026.
-`
-  }
-]
-
-export type PostPageData = {
-    isProject:boolean, 
-    headerData:ProjectHeader | BlogHeader, 
-    postData:PostData, 
-    postChangelog:GitRevision[], 
-    projChangelog:GitRevision[],
+    return data
 }
 
 export function PostPage() {
     const params = useParams(); 
     const location = useLocation(); 
-    const [pageData, setPageData] = React.useState({} as PostPageData); 
+    const [pageData, setPageData] = React.useState(null! as PostPageData); 
     const {client, preload} = React.useContext(AppContext)
 
     React.useEffect(() => {
-        console.log(preload); 
-        console.log(location.pathname)
+        ;(async() => {
+            let preloadData = {} as Preload<PostPageData>
+            if(Object.hasOwn(preload, location.pathname) && preload[location.pathname]) {
+                console.log("postpage - retreving data")
+                preloadData = await preload[location.pathname].data; 
+            } else {
+                preloadData = loadPostPage(client, {} as Preload<PostPageData>, location.pathname.match(/project/) != null, params.id!); 
+            }
 
-        if(Object.hasOwn(preload, location.pathname) && preload[location.pathname] && preload[location.pathname].data) {
-            console.log("postpage - retreving data")
-            setPageData(preload[location.pathname].data as any)
-        } else {
-            console.log("postpage - pulling data")
-            ;(async() => {     
-                const pageData:PostPageData = {} as PostPageData; 
-                pageData.isProject = location.pathname.includes("/projects/");      
+            setPageData(await resolvePreload(preloadData));
+        })(); 
+    }, [params.id]); 
 
-                const headerResp = pageData.isProject ? (await client.getProjectHeader({})) : (await client.getBlogHeader({}))
-                const targetData = headerResp.find(val => val.id == params.id); 
-                if(targetData) pageData.headerData = targetData; 
-
-                // handle calls async
-                if(params.id) {
-                    let resp:any; 
-                    resp = await client.getPostData({id: params.id})
-                    if(resp.length > 0) pageData.postData = resp[0];
-
-                    resp = await client.getPostChangelog({id: params.id})
-                    pageData.postChangelog = resp;
-                }
-
-                if((targetData as ProjectHeader).git) {
-                    let resp = await client.getProjectChangelog({link: (targetData as ProjectHeader).git!})
-                    pageData.projChangelog = resp; 
-                }
-
-                setPageData(pageData); 
-            })(); 
-        }
-    }, [location]); 
+    React.useEffect(() => {
+        console.log("Updated page data", pageData)
+    }, [pageData]); 
 
     return <MainPage className={styles.container}>
-
-        {!pageData.headerData || !pageData.postData ? 
+        {!pageData || !pageData.headerData || !pageData.postData ? 
             <Skeleton variant='text' /> 
             :<>
-                {pageData.isProject ? <ProjectBanner data={pageData.headerData as ProjectHeader} />: <BlogBanner data={pageData.headerData as BlogHeader} />}
+                {pageData.isProject ? <ProjectBanner data={pageData.headerData[0] as ProjectHeader} />: <BlogBanner data={pageData.headerData[0] as BlogHeader} />}
                 <Box className={styles.body}>
                     <Markdown components={mdStyle} remarkPlugins={[remarkGfm]}>{pageData.postData.postContent}</Markdown>
                 </Box>  

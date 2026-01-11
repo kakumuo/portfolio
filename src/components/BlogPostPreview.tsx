@@ -2,33 +2,16 @@ import React from "react";
 import { Box, Typography } from "@mantine/core";
 import { Tag } from "./Tag";
 import { formatDate } from "./Utils";
-import type { BlogHeader, GitRevision, PostData } from "./types";
+import type { BlogHeader, PostPageData, Preload } from "./types";
 import { PreloadableLink } from "./Preloadable";
-import type { PostPageData } from "../pages/PostPage";
 import { AppContext } from "../app";
+import {loadPostPage} from '../pages/PostPage'
+
 
 export function BlogPostPreview(props:{blogData: BlogHeader}) {
     const {client} = React.useContext(AppContext); 
 
-    const handlePreload = React.useCallback(async () => {
-        const pageData:PostPageData = {} as PostPageData; 
-        pageData.isProject = false;    
-
-        const headerResp = pageData.isProject ? (await client.getProjectHeader({})) : (await client.getBlogHeader({}))
-        const targetData = headerResp.find(val => val.id == props.blogData.id); 
-        if(targetData) pageData.headerData = targetData; 
-
-        // handle calls async
-        if(props.blogData.id) {
-            let resp:any; 
-            resp = await client.getPostData({id: props.blogData.id})
-            if(resp.length > 0) pageData.postData = resp[0];
-
-            resp = await client.getPostChangelog({id: props.blogData.id})
-            pageData.postChangelog = resp;
-        }
-        return pageData
-    }, [client])
+    const handlePreload = () => loadPostPage(client, {} as Preload<PostPageData>, false, props.blogData.id)
 
     return <PreloadableLink to={`/blog/${props.blogData.id}`} preLoad={handlePreload}>
             <Box className={styles.container}>

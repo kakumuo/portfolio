@@ -1,3 +1,4 @@
+import type { Preload } from "./types";
 
 
 export function formatDate(date:Date|number, relative:boolean = false) {
@@ -28,4 +29,17 @@ export function formatDate(date:Date|number, relative:boolean = false) {
   const month = String(targetDate.getMonth() + 1).padStart(2, "0");
   const day = String(targetDate.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+
+
+export async function resolvePreload<T>(preload: Preload<T>): Promise<T> {
+  const entries = await Promise.all(
+    Object.entries(preload).map(async ([key, value]) => {
+      const resolved = await value;
+      return [key, resolved] as const;
+    })
+  );
+
+  return Object.fromEntries(entries) as T;
 }

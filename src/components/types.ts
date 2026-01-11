@@ -10,20 +10,11 @@ type GitRevision = {
 
 type GitChangelog = {title:string, gitLink:string, changeItems:GitRevision[]}
 
-type ProjectData = {
-    title:string, 
-    startDate:Date, 
-    endDate:Date, 
-    type:string, 
-    taskSize:string, 
-    complexity:string, 
-    status:string, 
-    gitLink?:string, 
-    projectLink?:string, 
-    postLink?:string,
-    preview:string,
-    techMakeup:TechMakeup
-}
+
+// type BaseHeader = {
+//     id:string, 
+//     title:string
+// }
 
 type BlogHeader = {
     id: string, 
@@ -65,13 +56,28 @@ type PostData = {
 }
 
 
-export {
+type PostPageData = {
+    isProject:boolean, 
+    headerData:ProjectHeader[] | BlogHeader[], 
+    postData:PostData, 
+    postChangelog:GitRevision[], 
+    projChangelog:GitRevision[],
+}
+
+type Preload<T> = {
+    [K in keyof T]: Promise<T[K]>
+}
+
+export type {
     GitRevision, 
     GitChangelog, 
-    ProjectData, 
     ProjectHeader, 
     BlogHeader, 
     MakeupLayer, 
     PortfolioClientHeaderResponse, 
-    PostData
+    PostData, 
+    PostPageData, 
+    Preload
 }
+
+

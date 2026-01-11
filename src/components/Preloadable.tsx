@@ -14,11 +14,11 @@ export function PreloadableLink<T>(props:LinkProps & {preLoad:()=>T}) {
     const handleMouseEnter = () => {
         setTimer(setTimeout(async () => {
             if(!localPre || Date.now() - localPre.retriveTime > PRELOAD_TTL_MS) {
-                const res = await props.preLoad(); 
+                const res = props.preLoad();
                 setLocalPre({data: res, retriveTime: Date.now()}); 
-                console.log("preloadablelink retreived data...")
+                console.log("preloadablelink retreived data...", res);
             }else {
-                console.log("ignoring preload, already has data",  localPre)
+                console.log("ignoring preload, already has data",  localPre); 
             }
 
             setTimer(-1); 

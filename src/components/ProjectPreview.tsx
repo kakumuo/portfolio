@@ -3,40 +3,16 @@ import React from "react";
 import { data, Link } from "react-router"
 import { Caption } from "./Caption";
 import { formatDate } from "./Utils";
-import type { MakeupLayer, ProjectHeader } from "./types";
+import type { MakeupLayer, ProjectHeader, PostPageData, Preload } from "./types";
 import { AppContext } from "../app";
 import { PreloadableLink } from "./Preloadable";
-import type { PostPageData } from "../pages/PostPage";
+import { loadPostPage } from "../pages/PostPage";
 
 export function ProjectPreview(props:{className?:string, data:ProjectHeader}){
-     const {client} = React.useContext(AppContext); 
-
-    const handlePreload = React.useCallback(async () => {
-        const pageData:PostPageData = {} as PostPageData; 
-        pageData.isProject = true;      
-
-        const headerResp = pageData.isProject ? (await client.getProjectHeader({})) : (await client.getBlogHeader({}))
-        const targetData = headerResp.find(val => val.id == props.data.id); 
-        if(targetData) pageData.headerData = targetData; 
-
-        // handle calls async
-        if(props.data.id) {
-            let resp:any; 
-            resp = await client.getPostData({id: props.data.id})
-            if(resp.length > 0) pageData.postData = resp[0];
-
-            resp = await client.getPostChangelog({id: props.data.id})
-            pageData.postChangelog = resp;
-        }
-
-        if(props.data.git) {
-            let resp = await client.getProjectChangelog({link: props.data.git})
-            pageData.projChangelog = resp;
-        }
-
-        return pageData
-    }, [client])
+    const {client} = React.useContext(AppContext); 
     
+    const handlePreload = () => loadPostPage(client, {} as Preload<PostPageData>, true, props.data.id)
+
     return <Box className={styles.container}>
         <Box className={styles.header}>
             {
