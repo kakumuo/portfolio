@@ -167,8 +167,6 @@ export class PortfolioClient {
         const owner = linkpath[1]; 
         const repo = linkpath[0]; 
 
-        console.log(owner, repo)
-
         const resp = await this.octokit.rest.repos.getCommit({owner, repo, per_page: 5} as any); 
 
         if(resp.status != 200) {

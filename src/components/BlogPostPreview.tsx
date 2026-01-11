@@ -13,7 +13,7 @@ export function BlogPostPreview(props:{blogData: BlogHeader}) {
 
     const handlePreload = () => loadPostPage(client, {} as Preload<PostPageData>, false, props.blogData.id)
 
-    return <PreloadableLink to={`/blog/${props.blogData.id}`} preLoad={handlePreload}>
+    return <PreloadableLink to={`/blog/${props.blogData.id}`} preLoad={handlePreload} prefetch="intent">
             <Box className={styles.container}>
             <img className={styles.img} src={"https://placehold.co/600x400/png"} />
             <Typography>{props.blogData.summary}</Typography>

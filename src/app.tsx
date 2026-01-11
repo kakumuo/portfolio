@@ -2,32 +2,18 @@ import * as React from 'react'
 
 import {Box, Button, Divider, Portal, Typography} from '@mantine/core'; 
 import { HomePage } from './pages/HomePage';
-import { BrowserRouter, Route, Routes } from 'react-router';
+import { BrowserRouter, createBrowserRouter, Route, RouterProvider, Routes } from 'react-router';
 
 import { Link } from "react-router";
 import { IconGithub, IconGoodReads, IconLeetCode, IconLinkedIn, IconMAL } from "./components/Icons";
 import { ProjectsPage } from './pages/ProjectsPage';
-import { PostPage } from './pages/PostPage';
+import { loadPostPage, PostPage } from './pages/PostPage';
 import { BlogPage } from './pages/BlogPage';
 import { PortfolioClient } from './components/PortfolioClient';
+import { MainLayout, PageFooter, PageHeader } from './components/MainLayout';
+import type { PostPageData, Preload } from './components/types';
+import type { LoaderFunctionArgs } from 'react-router';
 
-
-
-const headerLinks:{label:string, link:string}[] = [
-    {label: "Home", link: "/"},
-    {label: "About", link: "/blog/about-me"},
-    {label: "Projects", link: "/projects"},
-    {label: "Blog", link: "/blog"},
-    {label: "Contact", link: "/contact"},
-];
-
-const footerLinks:{label:string, link:string, icon:React.JSX.Element}[] = [
-    {label: "LinkedIn", link: "https://www.linkedin.com/in/kevin-akumuo/", icon: <IconLinkedIn className="w-5 h-5" /> },
-    {label: "GitHub", link: "https://github.com/kakumuo/", icon: <IconGithub className="w-5 h-5" />},
-    {label: "LeetCode", link: "https://leetcode.com/u/foxfen23/", icon: <IconLeetCode className="w-5 h-5" />},
-    {label: "GoodReads", link: "https://www.goodreads.com/user/show/186704789-kevin-akumuo", icon: <IconGoodReads className="w-5 h-5" />},
-    {label: "MyMangaList", link: "https://myanimelist.net/mangalist/foxfen64?status=2&order=4&order2=0", icon: <IconMAL className="w-5 h-5" />},
-];
 
 
 export type PreloadMap = {[key:string]:{data:any, retriveTime:number}}
@@ -40,25 +26,53 @@ type AppContextData = {
 
 export const AppContext = React.createContext(null! as AppContextData); 
 
-
 //TODO: fix tailwind theme config
 export function App() {
     const [client, _] = React.useState(new PortfolioClient()); 
     const [preload, setPreload] = React.useState({} as PreloadMap)
 
+    const handlePreload = (path:string, callback:(...data:any[])=>any) => {
+        console.log(preload[path])
+        if (!preload[path]) {
+            console.log("setting preload on: ", path)
+            const entry = {
+                data: callback(), 
+                retriveTime: Date.now()
+            } as PreloadMap[any]; 
+
+            setPreload(prev => ({
+                ...prev, 
+                [path]: entry
+            })); 
+
+            return entry.data; 
+        } else {
+            console.log("getting preload on: ", path)
+            return preload[path].data; 
+        }
+    }
+
+    const router = React.useMemo(() => 
+        createBrowserRouter([
+            {path: "/", Component: MainLayout, children: [
+                {path: "/", Component: HomePage},
+                {path: '/projects' , Component: ProjectsPage},
+                {path: '/blog' , Component: BlogPage},
+                {path: '/projects/:id' , Component: PostPage, 
+                    loader: ({params, unstable_pattern}) => 
+                        handlePreload(params.id as string, loadPostPage.bind(loadPostPage, client, {} as Preload<PostPageData>, true, params.id as string))
+                },
+                {path: '/blog/:id'  , Component: PostPage, 
+                    loader: ({params}) => 
+                        handlePreload(params.id as string, loadPostPage.bind(loadPostPage, client, {} as Preload<PostPageData>, false, params.id as string))
+                }
+            ]}
+        ])
+    , [preload]); 
+
     return <AppContext value={{client, preload, setPreload}}>
         <Box className={styles.container}>
-            <BrowserRouter>
-                <PageHeader showFooter />
-                <Routes>
-                    <Route path='/' Component={HomePage}/>
-                    <Route path='/projects' Component={ProjectsPage}/>
-                    <Route path='/projects/:id' Component={PostPage}/>
-                    <Route path='/blog' Component={BlogPage}/>
-                    <Route path='/blog/:id' Component={PostPage}/>
-                </Routes>
-                <PageFooter />
-            </BrowserRouter>
+            <RouterProvider router={router} />
         </Box>
     </AppContext>
 }
@@ -80,31 +94,5 @@ const styles = {
     }
 }
 
-export function PageHeader(props:{showFooter:boolean}) {
-    return <Box className={styles.pageHeader.container}>
-        <Box className={styles.pageHeader.header}>
-            <Typography className={"mr-auto"}>Some Name</Typography>
-            {headerLinks.map((link, linkI) => <Link key={linkI} to={link.link}>{link.label}</Link>)}
-        </Box>
-        <Divider />
-
-        {props.showFooter &&         
-            <Box className={styles.pageHeader.footer}>
-                <Box className={"ml-auto"} />
-                {footerLinks.map((link, linkI) => <Link key={linkI} to={link.link}>{link.icon}</Link>)}
-            </Box>
-        }
-    </Box>
-}
 
 
-export function PageFooter(){
-    const handleTOP = () => {
-        document.documentElement.scrollTop = 0; 
-    }
-
-    return <Box className={styles.pageFooter.container}>
-        <Button className="justify-self-start" onClick={handleTOP}>Top of Page</Button>
-        <Typography className="justify-self-center">© {new Date().getFullYear()} Kevin Akumuo - All rights reserved</Typography>
-    </Box>
-}

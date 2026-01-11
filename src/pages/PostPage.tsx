@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Box, Divider, Skeleton, Typography } from "@mantine/core";
-import { Link, useLocation, useParams } from "react-router";
+import { Link, useLoaderData, useLocation, useParams } from "react-router";
 import { MainPage } from "../components/MainPage";
 import { LinkButtonGroup, StatusGrid, TechMakeupBar } from "../components/ProjectPreview";
 import { formatDate, resolvePreload } from '../components/Utils';
@@ -9,38 +9,6 @@ import remarkGfm from 'remark-gfm';
 import { type GitRevision, type ProjectHeader, type BlogHeader, type PostPageData, type Preload } from '../components/types';
 import { AppContext } from '../app';
 import type { PortfolioClient } from '../components/PortfolioClient';
-
-/*
-
-export async function loadPostPage(client:PortfolioClient, data:Preload<PostPageData>, targetId?:string) {
-    const pageData:PostPageData = {} as PostPageData; 
-    pageData.isProject = location.pathname.includes("/projects/");      
-
-    let targetData; 
-    if(!data.headerData) {
-        const headerResp = pageData.isProject ? (await client.getProjectHeader({})) : (await client.getBlogHeader({}))
-        targetData = headerResp.find(val => val.id == targetId); 
-        if(targetData) pageData.headerData = targetData; 
-    }
-
-    // handle calls async
-    if(!data.postData && targetId) {
-        client.getPostData({id: targetId}).
-            then(resp => resp.length > 0 && (pageData.postData = resp[0]))
-
-    if(!data.postChangelog && targetId)
-        client.getPostChangelog({id: targetId})
-            .then(resp => pageData.postChangelog = resp); 
-    }
-
-    if(!data.projChangelog && (targetData as ProjectHeader).git) {
-        client.getProjectChangelog({link: (targetData as ProjectHeader).git!})
-            .then(resp => (pageData.projChangelog = resp)); 
-    }
-
-    return pageData
-}
-*/
 
 
 export function loadPostPage(client:PortfolioClient, data:Preload<PostPageData>, isProject:boolean, id:string) {
@@ -55,28 +23,14 @@ export function loadPostPage(client:PortfolioClient, data:Preload<PostPageData>,
 }
 
 export function PostPage() {
-    const params = useParams(); 
-    const location = useLocation(); 
     const [pageData, setPageData] = React.useState(null! as PostPageData); 
-    const {client, preload} = React.useContext(AppContext)
+    const preloadData = useLoaderData<typeof loadPostPage>()
 
     React.useEffect(() => {
         ;(async() => {
-            let preloadData = {} as Preload<PostPageData>
-            if(Object.hasOwn(preload, location.pathname) && preload[location.pathname]) {
-                console.log("postpage - retreving data")
-                preloadData = await preload[location.pathname].data; 
-            } else {
-                preloadData = loadPostPage(client, {} as Preload<PostPageData>, location.pathname.match(/project/) != null, params.id!); 
-            }
-
             setPageData(await resolvePreload(preloadData));
         })(); 
-    }, [params.id]); 
-
-    React.useEffect(() => {
-        console.log("Updated page data", pageData)
-    }, [pageData]); 
+    }, [preloadData]); 
 
     return <MainPage className={styles.container}>
         {!pageData || !pageData.headerData || !pageData.postData ? 
