@@ -1,6 +1,7 @@
 import { Box, Button, Divider, Typography } from "@mantine/core";
 import { Link, Outlet } from "react-router";
 import { IconGithub, IconGoodReads, IconLeetCode, IconLinkedIn, IconMAL } from "./Icons";
+import { HashLink } from "react-router-hash-link";
 
 
 
@@ -9,7 +10,7 @@ const headerLinks:{label:string, link:string}[] = [
     {label: "About", link: "/blog/about-me"},
     {label: "Projects", link: "/projects"},
     {label: "Blog", link: "/blog"},
-    {label: "Contact", link: "/contact"},
+    {label: "Contact", link: "/blog/contact-me"},
 ];
 
 const footerLinks:{label:string, link:string, icon:React.JSX.Element}[] = [
@@ -30,9 +31,9 @@ export function MainLayout() {
 }
 
 export function PageHeader(props:{showFooter:boolean}) {
-    return <Box className={styles.pageHeader.container}>
+    return <Box id="top" className={styles.pageHeader.container}>
         <Box className={styles.pageHeader.header}>
-            <Typography className={"mr-auto"}>Some Name</Typography>
+            <Link to={"/"} className={"mr-auto"}>Some Name</Link>
             {headerLinks.map((link, linkI) => <Link key={linkI} to={link.link}>{link.label}</Link>)}
         </Box>
         <Divider />
@@ -48,12 +49,8 @@ export function PageHeader(props:{showFooter:boolean}) {
 
 
 export function PageFooter(){
-    const handleTOP = () => {
-        document.documentElement.scrollTop = 0; 
-    }
-
     return <Box className={styles.pageFooter.container}>
-        <Button className="justify-self-start" onClick={handleTOP}>Top of Page</Button>
+        <HashLink smooth to={"#top"}>Top of Page</HashLink>
         <Typography className="justify-self-center">© {new Date().getFullYear()} Kevin Akumuo - All rights reserved</Typography>
     </Box>
 }

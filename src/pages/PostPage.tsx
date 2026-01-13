@@ -9,7 +9,19 @@ import remarkGfm from 'remark-gfm';
 import { type GitRevision, type ProjectHeader, type BlogHeader, type PostPageData, type Preload } from '../components/types';
 import type { PortfolioClient } from '../components/PortfolioClient';
 import { MarkdownStyle } from '../components/MarkdownStyle';
+import { SideNav, type SideNavElement } from '../components/SideNav';
 
+
+const sampleNavElements: SideNavElement[] = [
+  { label: "Experience", href: "#experience", priority: 1 },
+  { label: "Projects", href: "#projects", priority: 2 },
+  { label: "Teams", href: "#teams", priority: 3 },
+  { label: "Reports", href: "#reports", priority: 4 },
+  { label: "Settings", href: "#settings", priority: 5 },
+  { label: "Help Center", href: "#help", priority: 6 },
+  { label: "Profile", href: "#profile", priority: 7 },
+  { label: "Logout", href: "#logout", priority: 99 }
+]; 
 
 export function loadPostPage(client:PortfolioClient, data:Preload<PostPageData>, isProject:boolean, id:string) {
     data.isProject = new Promise((resolve, _) => resolve(isProject)); 
@@ -24,7 +36,9 @@ export function loadPostPage(client:PortfolioClient, data:Preload<PostPageData>,
 
 export function PostPage() {
     const [pageData, setPageData] = React.useState(null! as PostPageData); 
-    const preloadData = useLoaderData<typeof loadPostPage>()
+    const preloadData = useLoaderData<typeof loadPostPage>(); 
+    const [sideNavElements, setSideNavElements] = React.useState(sampleNavElements)
+    const bodyRef = React.useRef<HTMLDivElement>(null!); 
 
     React.useEffect(() => {
         ;(async() => {
@@ -47,12 +61,33 @@ export function PostPage() {
         })();
     }, [preloadData]); 
 
+
+    // run when data is loaded
+    React.useEffect(() => {
+        if(!bodyRef.current || !bodyRef.current.children) return; 
+        const tmp:SideNavElement[]= []; 
+        const targetAnchors = ['h1', 'h2', 'h3', 'h4', 'h5']
+
+        for(let child of bodyRef.current.children) {
+            if(targetAnchors.includes(child.tagName.toLowerCase())) {
+                const targetId = child.textContent.toLowerCase().replace(' ', '-'); 
+                child.id = targetId; 
+
+                tmp.push({label: child.textContent, href: "#" + targetId, priority: targetAnchors.indexOf(child.tagName.toLowerCase())})
+            }
+        }
+
+        setSideNavElements(tmp); 
+
+    }, [pageData])
+
     return <MainPage className={styles.container}>
         {!pageData || !pageData.headerData || !pageData.postData ? 
             <Skeleton variant='text' /> 
             :<>
+                <SideNav rootElements={sideNavElements} />
                 {pageData.isProject ? <ProjectBanner data={pageData.headerData[0] as ProjectHeader} />: <BlogBanner data={pageData.headerData[0] as BlogHeader} />}
-                <Box className={styles.body}>
+                <Box ref={bodyRef} className={styles.body}>
                     <Markdown components={MarkdownStyle} remarkPlugins={[remarkGfm]}>{pageData.postData.postContent}</Markdown>
                 </Box>  
                 {pageData.isProject && <ChangeLog title='Project ChangeLog' revisions={pageData.projChangelog} />}
@@ -116,7 +151,7 @@ const styles = {
         head: `grid grid-cols-[auto_1fr_auto] grid-rows-1`, 
         footer: `grid`,
     },
-    body: `grid`, 
+    body: `grid gap-md`, 
     changelog: {
         container: `grid gap-md`, 
         header: `grid gap-sm`, 

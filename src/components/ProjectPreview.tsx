@@ -109,6 +109,7 @@ const styles = {
             aspect-1/1
             text-center
             select-none
+            float-left
         `, 
         item:`font-serif`, 
         captionContainer: `grid`, 

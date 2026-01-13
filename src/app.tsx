@@ -1,18 +1,16 @@
 import * as React from 'react'
 
-import {Box, Button, Divider, Portal, Typography} from '@mantine/core'; 
+import {Box} from '@mantine/core'; 
 import { HomePage } from './pages/HomePage';
-import { BrowserRouter, createBrowserRouter, Route, RouterProvider, Routes } from 'react-router';
+import { createBrowserRouter, RouterProvider, } from 'react-router';
 
-import { Link } from "react-router";
-import { IconGithub, IconGoodReads, IconLeetCode, IconLinkedIn, IconMAL } from "./components/Icons";
 import { ProjectsPage } from './pages/ProjectsPage';
 import { loadPostPage, PostPage } from './pages/PostPage';
 import { BlogPage } from './pages/BlogPage';
 import { PortfolioClient } from './components/PortfolioClient';
-import { MainLayout, PageFooter, PageHeader } from './components/MainLayout';
+import { MainLayout } from './components/MainLayout';
 import type { PostPageData, Preload } from './components/types';
-import type { LoaderFunctionArgs } from 'react-router';
+import { NotFoundPage } from './pages/NotFoundPage';
 
 
 
@@ -59,13 +57,14 @@ export function App() {
                 {path: '/projects' , Component: ProjectsPage},
                 {path: '/blog' , Component: BlogPage},
                 {path: '/projects/:id' , Component: PostPage, 
-                    loader: ({params, unstable_pattern}) => 
+                    loader: ({params}) => 
                         handlePreload(params.id as string, loadPostPage.bind(loadPostPage, client, {} as Preload<PostPageData>, true, params.id as string))
                 },
                 {path: '/blog/:id'  , Component: PostPage, 
                     loader: ({params}) => 
                         handlePreload(params.id as string, loadPostPage.bind(loadPostPage, client, {} as Preload<PostPageData>, false, params.id as string))
-                }
+                },
+                {path: '/*', Component: NotFoundPage}
             ]}
         ])
     , [preload]); 
