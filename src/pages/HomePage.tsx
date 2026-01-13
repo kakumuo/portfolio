@@ -7,32 +7,37 @@ import { BlogPostPreview } from "../components/BlogPostPreview";
 import { ProjectPreview } from "../components/ProjectPreview";
 import { Caption } from "../components/Caption";
 import { AppContext } from "../app";
-import type { BlogHeader, ProjectHeader } from '../components/types';
+import type { BlogHeader, PostData, ProjectHeader } from '../components/types';
+import Markdown from 'react-markdown';
 
 
 export function HomePage(){
     const {client} = React.useContext(AppContext); 
+    const [overview, setOverview] = React.useState({} as PostData)
     const [featuredBlogData, setFeaturedBlogData] = React.useState([] as BlogHeader[]); 
     const [featuredProjData, setFeaturedProjData] = React.useState([] as ProjectHeader[]); 
 
-    React.useEffect(() => {
-        (async() => {
-            const blogData = await client.getBlogHeader({});
+    React.useEffect(() => {      
+        ;(async() => {
+            const [overviewData, blogData, projData] = await Promise.all([
+                client.getPostData({id: 'overview'}), 
+                client.getBlogHeader({}), 
+                client.getProjectHeader({}), 
+            ])
+
+            setOverview(overviewData) 
+
             const blogRes = blogData.sort((a, b) => b.createDate - a.createDate).filter((_, i) => i < 3); 
             setFeaturedBlogData(blogRes); 
 
-            const projData = await client.getProjectHeader({}); 
             const projRes = projData.sort((a, b) => b.endDate - a.endDate).filter((_, i) => i < 3); 
             setFeaturedProjData(projRes); 
         })(); 
     }, []); 
 
     return <MainPage>
-        <Typography className={styles.textheader}>
-            I am an experienced software developer with a strong background in Backend and ETL development. Currently working as a Applicaiton Developer II at UPS, where I've been instrumental in developing and improving critical processes for managing large-scale customer data.
-            I am committed to continuous learning and applying cutting-edge solutions to complex business problems in the rapidly evolving field of software development.
-        </Typography>
-
+        {overview && <Box className={styles.textheader}><Markdown >{overview.postContent}</Markdown></Box>}
+        
         <SectionHeader title="Featured Posts" more={{label: "More Posts", link: "/blog"}} />
         <Box className={styles.blogCarousel}>
             {featuredBlogData.map((data, dataI) => <BlogPostPreview key={dataI} blogData={data}/>)}
@@ -46,7 +51,6 @@ export function HomePage(){
         <Box className={styles.projectsSection}>
             {featuredProjData.map((proj, projI) => <ProjectPreview data={proj} key={projI} />)}
         </Box>
-
     </MainPage>
 }
 

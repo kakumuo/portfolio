@@ -78,7 +78,7 @@ export class PortfolioClient {
     async getProjectHeader({ids}:{ids?:string[]}) {
         return this.getHeaderData({ids, type: 'project'}) as Promise<ProjectHeader[]>
     }
-
+    
     async getPostData({id}:{id:string}) : Promise<PostData>{
         const resp = await this.octokit.rest.repos.getContent({
             owner: OWNER, 
@@ -92,9 +92,9 @@ export class PortfolioClient {
         }
 
         const postData:PostData = {
-            attachments: [], 
+            attachments: undefined, 
             postContent: "", 
-            previewImage: "",
+            previewImage: undefined,
         } as PostData; 
 
         for(let item of (resp.data as GitContentData[])) {            
@@ -109,6 +109,7 @@ export class PortfolioClient {
             } else if(item.name.match(/preview\.(png|jpg|jpeg|gif)/) && item.download_url) {
                 postData.previewImage = item.download_url; 
             } else if (item.name.match(/\.(png|jpg|jpeg|gif)$/) && item.download_url){
+                if(!postData.attachments) postData.attachments = []
                 postData.attachments.push(item.download_url); 
             }
         }

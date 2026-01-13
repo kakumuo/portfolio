@@ -1,14 +1,14 @@
 import * as React from 'react'
 import { Box, Divider, Skeleton, Typography } from "@mantine/core";
-import { Link, useLoaderData, useLocation, useParams } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { MainPage } from "../components/MainPage";
 import { LinkButtonGroup, StatusGrid, TechMakeupBar } from "../components/ProjectPreview";
 import { formatDate, resolvePreload } from '../components/Utils';
 import Markdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { type GitRevision, type ProjectHeader, type BlogHeader, type PostPageData, type Preload } from '../components/types';
-import { AppContext } from '../app';
 import type { PortfolioClient } from '../components/PortfolioClient';
+import { MarkdownStyle } from '../components/MarkdownStyle';
 
 
 export function loadPostPage(client:PortfolioClient, data:Preload<PostPageData>, isProject:boolean, id:string) {
@@ -28,8 +28,23 @@ export function PostPage() {
 
     React.useEffect(() => {
         ;(async() => {
-            setPageData(await resolvePreload(preloadData));
-        })(); 
+            const [post, header, changelog] = await Promise.all([
+                (await fetch("/samplePost/post.md")).text(), 
+                (await fetch("/samplePost/header.json")).json(), 
+                (await fetch("/samplePost/changelog.json")).json()
+            ]); 
+
+            // console.log(post, header, changelog); 
+
+            setPageData({
+                isProject: false, 
+                headerData: [header], 
+                postChangelog: changelog, 
+                postData: {
+                    postContent: post
+                }
+            } as PostPageData)
+        })();
     }, [preloadData]); 
 
     return <MainPage className={styles.container}>
@@ -38,7 +53,7 @@ export function PostPage() {
             :<>
                 {pageData.isProject ? <ProjectBanner data={pageData.headerData[0] as ProjectHeader} />: <BlogBanner data={pageData.headerData[0] as BlogHeader} />}
                 <Box className={styles.body}>
-                    <Markdown components={mdStyle} remarkPlugins={[remarkGfm]}>{pageData.postData.postContent}</Markdown>
+                    <Markdown components={MarkdownStyle} remarkPlugins={[remarkGfm]}>{pageData.postData.postContent}</Markdown>
                 </Box>  
                 {pageData.isProject && <ChangeLog title='Project ChangeLog' revisions={pageData.projChangelog} />}
                 <ChangeLog title='Post ChangeLog' revisions={pageData.postChangelog} />
@@ -92,14 +107,6 @@ function RevisionItem(props:{revision:GitRevision}) {
         </Box>
         <Markdown>{props.revision.body}</Markdown>
     </Box>
-}
-
-const mdStyle:Components = {
-    // Rewrite `em`s (`*like so*`) to `i` with a red foreground color.
-    em(props) {
-        const {node, ...rest} = props
-        return <i style={{color: 'red'}} {...rest} />
-    }
 }
 
 const styles = {

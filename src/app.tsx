@@ -32,9 +32,9 @@ export function App() {
     const [preload, setPreload] = React.useState({} as PreloadMap)
 
     const handlePreload = (path:string, callback:(...data:any[])=>any) => {
-        console.log(preload[path])
+        // console.log(preload[path])
         if (!preload[path]) {
-            console.log("setting preload on: ", path)
+            // console.log("setting preload on: ", path)
             const entry = {
                 data: callback(), 
                 retriveTime: Date.now()
@@ -47,7 +47,7 @@ export function App() {
 
             return entry.data; 
         } else {
-            console.log("getting preload on: ", path)
+            // console.log("getting preload on: ", path)
             return preload[path].data; 
         }
     }

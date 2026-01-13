@@ -1,3 +1,4 @@
+import type {Components} from "react-markdown";
 import type { Preload } from "./types";
 
 
@@ -43,3 +44,5 @@ export async function resolvePreload<T>(preload: Preload<T>): Promise<T> {
 
   return Object.fromEntries(entries) as T;
 }
+
+
