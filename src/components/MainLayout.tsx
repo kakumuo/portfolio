@@ -1,16 +1,18 @@
 import { Box, Button, Divider, Typography } from "@mantine/core";
-import { Link, Outlet } from "react-router";
+import { Link, Outlet, useLocation } from "react-router";
 import { IconGithub, IconGoodReads, IconLeetCode, IconLinkedIn, IconMAL } from "./Icons";
 import { HashLink } from "react-router-hash-link";
+import { Caption } from "./Caption";
+import { ProjectsPage } from "../pages/ProjectsPage";
 
 
 
 const headerLinks:{label:string, link:string}[] = [
-    {label: "Home", link: "/"},
-    {label: "About", link: "/blog/about-me"},
-    {label: "Projects", link: "/projects"},
-    {label: "Blog", link: "/blog"},
-    {label: "Contact", link: "/blog/contact-me"},
+    {label: "//home", link: "/"},
+    {label: "//about", link: "/blog/about-me"},
+    {label: "//projects", link: "/projects"},
+    {label: "//blog", link: "/blog"},
+    {label: "//contact", link: "/blog/contact-me"},
 ];
 
 const footerLinks:{label:string, link:string, icon:React.JSX.Element}[] = [
@@ -24,34 +26,34 @@ const footerLinks:{label:string, link:string, icon:React.JSX.Element}[] = [
 
 export function MainLayout() {
     return <>
-        <PageHeader showFooter/>
+        <PageHeader/>
         <Outlet />
         <PageFooter />
     </>
 }
 
-export function PageHeader(props:{showFooter:boolean}) {
-    return <Box id="top" className={styles.pageHeader.container}>
-        <Box className={styles.pageHeader.header}>
-            <Link to={"/"} className={"mr-auto"}>Some Name</Link>
-            {headerLinks.map((link, linkI) => <Link key={linkI} to={link.link}>{link.label}</Link>)}
-        </Box>
-        <Divider />
+function HeaderLink(props:{link:string, label:string, className?:string}) {
+    const loc = useLocation(); 
+    const regex = new RegExp(`.*${props.link}(#.*)?$`); 
+    const selectStyle = `underline font-bold italic`
 
-        {props.showFooter &&         
-            <Box className={styles.pageHeader.footer}>
-                <Box className={"ml-auto"} />
-                {footerLinks.map((link, linkI) => <Link key={linkI} to={link.link}>{link.icon}</Link>)}
-            </Box>
-        }
+    return <Link className={`${props.className} ${loc.pathname.match(regex) ? selectStyle : ""}`} key={props.label} to={props.link} children={props.label}/>
+}
+
+export function PageHeader() {
+    return <Box id="top" className={styles.pageHeader.container}>
+        <Link to={"/"} className={`${styles.pageHeader.element}`}>Some Name</Link>
+        <Divider className={styles.pageHeader.divider} />
+        {headerLinks.map((link, linkI) => <HeaderLink className={`${styles.pageHeader.element}`} key={linkI} {...link}/>)}
     </Box>
 }
 
 
 export function PageFooter(){
-    return <Box className={styles.pageFooter.container}>
-        <HashLink smooth to={"#top"}>Top of Page</HashLink>
-        <Typography className="justify-self-center">© {new Date().getFullYear()} Kevin Akumuo - All rights reserved</Typography>
+    return <Box className={styles.pageFooter._}>
+        {footerLinks.map((l, lI) => <Caption className={styles.pageFooter.ele} key={lI} children={l.icon} link={l.link} caption={l.label} />)}
+        <Divider className={styles.pageFooter.divider} />
+        <Typography className={styles.pageFooter.ele}>© {new Date().getFullYear()} Kevin Akumuo - All rights reserved</Typography>
     </Box>
 }
 
@@ -65,11 +67,18 @@ const styles = {
         grid grid-cols-1 grid-rows-[auto_1fr]
         `,
     pageHeader: {
-        container: `light w-full h-auto grid grid-cols-1 grid-rows-auto gap-sm bg-secondary`, 
-        header: `w-full flex gap-md text-primary`, 
+        container: `relative w-full flex gap-sm`, 
+        element: `
+            bg-white z-10 p-sm align-middle
+            first:mr-auto first:ml-10 first:text-xl first:font-header
+            last:mr-10`,
+        divider: `absolute top-1/2 w-full bg-blue`, 
+        header: `w-full flex gap-md`, 
         footer: `w-full flex gap-md`
     }, 
     pageFooter: {
-        container: `grid grid-cols-1 grid-rows-auto`
+        _: `flex gap relative h-10 items-center gap-md`, 
+        divider: `absolute self-center w-full`, 
+        ele: `first:ml-8 last:mr-8 last:ml-auto z-1 bg-white`, 
     }
 }

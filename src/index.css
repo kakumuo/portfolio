@@ -4,7 +4,25 @@
 @tailwind components;
 @tailwind utilities;
 
+@utility font-header {
+  @apply text-balance tracking-wider uppercase;
+  font-family:'Times New Roman', Times, serif; 
+}
+
+@utility font-subheader {
+  @apply text-balance tracking-wide;
+  font-family: 'Times New Roman', Times, serif; 
+}
+
+@utility font-subtext {
+  @apply text-sm; 
+  font-family: monospace; 
+}
+
+
 @layer utilities {
+
+  
   /* Gap */
   .gap-xs {
     @apply gap-1;

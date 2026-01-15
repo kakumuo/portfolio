@@ -46,3 +46,14 @@ export async function resolvePreload<T>(preload: Preload<T>): Promise<T> {
 }
 
 
+export function threeDigitCode(text:string) {
+  let sum = 0;
+
+  for (let i = 0; i < text.length; i++) {
+    sum += text.charCodeAt(i); // Unicode code point for each character
+  }
+
+  const n = sum % 1000;        // keep only three digits
+  return n.toString().padStart(3, "0");
+}
+

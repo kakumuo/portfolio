@@ -79,7 +79,7 @@ export function App() {
 const styles = {
     container: `
         h-screen w-screen 
-        pl-50 pr-50
+        pl-25 pr-25
         overflow-y-scroll
         grid grid-cols-1 grid-rows-[auto_1fr]
         `,
