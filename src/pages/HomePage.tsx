@@ -224,30 +224,7 @@ function ProjectDisplay({projects}:{projects:ProjectHeader[]}){
 
     return <Box className={styles.projDisplay._}>
         <DisplayHeader label='Project // Featured' color='orange' to='/projects' />
-        <Box className={styles.projDisplay.main._} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} key={projI}>
-            <Box className='absolute w-full h-full top-0 left-0 bg-black/2 -z-1
-              transition duration-300 ease-in-out
-              bg-black/2 opacity-0
-              group-hover:opacity-100
-            '>
-              <Corners className='absolute top-0 left-0' corner='tl' />
-              <Corners className='absolute bottom-0 right-0' corner='br' />
-            </Box>
-            <Typography className='font-subheader'>// PROJ-{threeDigitCode(curProj.id)}</Typography>
-            <Box className={styles.projDisplay.header._}>
-                <Typography className={styles.projDisplay.header.title} style={{fontStyle: hover ? 'italic' : 'normal'}}>{curProj.title}</Typography>
-                <Divider />
-                <Link to={curProj.git!}><Button disabled={curProj.git == null}>Git</Button></Link>
-                <Link to={curProj.url!}><Button disabled={curProj.url == null}>Site</Button></Link>
-            </Box>
-
-            <Typography className={styles.projDisplay.main.summary}>{curProj.summary}</Typography>
-
-            <Box className={styles.projDisplay.main.footer}>
-                <StatusGrid data={curProj} />
-                <TechMakeupBar makeup={curProj.makeupLayers} />
-            </Box>
-        </Box>
+        <ProjectPreview key={projI} curProj={curProj} />
         
         <Box
           className={styles.projDisplay.progress + " transition ease-in-out duration-300"} 
@@ -262,6 +239,33 @@ function ProjectDisplay({projects}:{projects:ProjectHeader[]}){
             <Button onClick={() => nextProj(true)} className={styles.projDisplay.footer.buttons}>{"next"}</Button>
         </Box>
     </Box>
+}
+
+export function ProjectPreview({curProj}:{curProj:ProjectHeader }){
+  return <Box className={styles.projDisplay.main._}>
+            <Box className='absolute w-full h-full top-0 left-0 bg-black/2 -z-1
+              transition duration-300 ease-in-out
+              bg-black/2 opacity-0
+              group-hover:opacity-100
+            '>
+              <Corners className='absolute top-0 left-0' corner='tl' />
+              <Corners className='absolute bottom-0 right-0' corner='br' />
+            </Box>
+            <Typography className='font-subheader'>// PROJ-{threeDigitCode(curProj.id)}</Typography>
+            <Box className={styles.projDisplay.header._}>
+                <Typography className={styles.projDisplay.header.title}>{curProj.title}</Typography>
+                <Divider />
+                <Link to={curProj.git!}><Button disabled={curProj.git == null}>Git</Button></Link>
+                <Link to={curProj.url!}><Button disabled={curProj.url == null}>Site</Button></Link>
+            </Box>
+
+            <Typography className={styles.projDisplay.main.summary}>{curProj.summary}</Typography>
+
+            <Box className={styles.projDisplay.main.footer}>
+                <StatusGrid data={curProj} />
+                <TechMakeupBar makeup={curProj.makeupLayers} />
+            </Box>
+        </Box>
 }
 
 function BlogDisplay({blogs}:{blogs:BlogHeader[]}) {
@@ -351,7 +355,7 @@ const styles = {
         progress: `grid flex h-2 border`,
         header: {
           _:  `grid grid-rows-1 grid-cols-[auto_1fr_auto_auto] items-center gap-sm`,
-          title: `font-subtitle`, 
+          title: `font-subtitle group-hover:italic`, 
         },
         footer: {
             _:  `flex items-center justify-center gap-sm`,

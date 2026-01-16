@@ -1,44 +1,218 @@
 import React from "react";
-
-import { Typography, Box, Input } from "@mantine/core";
+import { Link } from "react-router";
+import { Typography, Box, Input, Divider } from "@mantine/core";
 import { Caption } from "../components/Caption";
-import { ProjectPreview } from "../components/ProjectPreview";
+import { ProjectPreview } from "./HomePage";
 import  { SectionHeader } from "../components/SectionHeader";
 import { MainPage } from "../components/MainPage";
-import { SearchBar } from "../components/SearchBar";
+import { SearchBar, type SortOption } from "../components/Components";
 import type { ProjectHeader } from "../components/types";
 import { AppContext } from "../app";
 
 
+
+const sampleProjData:ProjectHeader[] = [
+  {
+    "id": "personal-site",
+    "title": "Portfolio Site A",
+    "summary": "A simple portfolio site",
+    "startDate": 12345677,
+    "endDate": 12345677,
+    "hasPost": true,
+    "git": "https://github.com/kakumuo/portfolio",
+    "url": "https://kakumuo.github.io/portfolio/",
+    "complexity": "medium",
+    "status": "inprogress",
+    "taskSize": "large",
+    "type": "web-app",
+    "makeupLayers": [
+      {
+        "name": "Frontend",
+        "items": [
+          {
+            "tech": "React",
+            "percentage": 1
+          }, 
+          {
+            "tech": "React 2",
+            "percentage": 30
+          }, 
+          {
+            "tech": "React 3",
+            "percentage": 40
+          }
+        ]
+      },
+      {
+        "name": "Backend",
+        "items": [
+          {
+            "tech": "GIT",
+            "percentage": 100
+          }
+        ]
+      }
+    ]
+  }, 
+  {
+    "id": "personal-site-2",
+    "title": "Portfolio Site B",
+    "summary": "A simple portfolio site",
+    "startDate": 12345677,
+    "endDate": 12345677,
+    "hasPost": true,
+    "git": "https://github.com/kakumuo/portfolio",
+    "url": "https://kakumuo.github.io/portfolio/",
+    "complexity": "medium",
+    "status": "inprogress",
+    "taskSize": "large",
+    "type": "web-app",
+    "makeupLayers": [
+      {
+        "name": "Frontend",
+        "items": [
+          {
+            "tech": "React",
+            "percentage": 1
+          }, 
+          {
+            "tech": "React 2",
+            "percentage": 30
+          }, 
+          {
+            "tech": "React 3",
+            "percentage": 40
+          }
+        ]
+      },
+      {
+        "name": "Backend",
+        "items": [
+          {
+            "tech": "GIT",
+            "percentage": 100
+          }
+        ]
+      }
+    ]
+  }, 
+  {
+    "id": "personal-site-1",
+    "title": "Portfolio Site C",
+    "summary": "A simple portfolio site",
+    "startDate": 12345677,
+    "endDate": 12345677,
+    "hasPost": true,
+    "git": "https://github.com/kakumuo/portfolio",
+    "url": "https://kakumuo.github.io/portfolio/",
+    "complexity": "medium",
+    "status": "inprogress",
+    "taskSize": "large",
+    "type": "web-app",
+    "makeupLayers": [
+      {
+        "name": "Frontend",
+        "items": [
+          {
+            "tech": "React",
+            "percentage": 1
+          }, 
+          {
+            "tech": "React 2",
+            "percentage": 30
+          }, 
+          {
+            "tech": "React 3",
+            "percentage": 40
+          }
+        ]
+      },
+      {
+        "name": "Backend",
+        "items": [
+          {
+            "tech": "GIT",
+            "percentage": 100
+          }
+        ]
+      }
+    ]
+  }
+]
+
+
+enum SortOptionType {
+    TITLE = 'Name',
+    STARTDATE = 'Start Date',
+    ENDDATE = 'End Date',
+}
+
 export function ProjectsPage(){
     const {client} = React.useContext(AppContext); 
     const [projectHeaders, setProjectHeaders]   = React.useState([] as ProjectHeader[]) 
+    const [sort, setSort] = React.useState([] as SortOption[]); 
+    const [filters, setFilters] = React.useState([] as string[]); 
 
     React.useEffect(() => {
         ; (async() => {
             const resp = await client.getProjectHeader({}); 
-            setProjectHeaders(resp); 
+            // setProjectHeaders(resp); 
+            setProjectHeaders(sampleProjData); 
         })(); 
     }, [])
 
-    return <MainPage>
+    const filterData = React.useMemo(() => {
+        let tmp = [...projectHeaders]
+        if(filters.length > 0) {
+            tmp = projectHeaders.filter(h => {
+                let didFilter = false; 
+                for(const f of filters) {
+                    if(f.trim() == "") continue; 
+                    if(JSON.stringify(h).toLowerCase().includes(f.toLowerCase())) {
+                        didFilter = true; 
+                        return true; 
+                    }
+                }
+
+                return didFilter; 
+            })
+        }
+
+        tmp.sort((a, b) => {
+            let curIndex = -1; 
+            if((curIndex = sort.findIndex(o => o.label == SortOptionType.TITLE)) != -1 && a.title.localeCompare(b.title) != 0) {
+                return  (sort[curIndex].asc ? 1 : -1) * a.title.localeCompare(b.title)
+            } else if ((curIndex = sort.findIndex(o => o.label == SortOptionType.STARTDATE)) != -1 && a.startDate - b.startDate != 0) {
+                return (sort[curIndex].asc ? 1 : -1) * a.startDate - b.startDate
+            } else if (((curIndex = sort.findIndex(o => o.label == SortOptionType.ENDDATE)) != -1) && a.endDate - b.endDate != 0) {
+                return (sort[curIndex].asc ? 1 : -1) * a.endDate - b.endDate
+            }
+            else return 0; 
+        })
+
+        return tmp;         
+    }, [filters, projectHeaders, sort])
+
+    return <MainPage className={styles._}>
             <SectionHeader  title="Projects">
                 <Caption className={styles.projectHelp}>
                     <Typography className={styles.projectHelp}>[?]</Typography>
                 </Caption>
             </SectionHeader>
 
-            <SearchBar />
+            <SearchBar setFilters={setFilters} sortOptions={Object.values(SortOptionType)} setSort={setSort} />
+            
+            <Divider />
 
             <Box className={styles.projectsSection}>
-                {projectHeaders.map((proj, projI) => <ProjectPreview data={proj} key={projI} />)}
+                {filterData.map(proj => <Link key={proj.id} to={`project/${proj.id}`} ><ProjectPreview curProj={proj} /></Link>)}
             </Box>
         </MainPage>
     
 }
 
-
 const styles = {
-    projectsSection: `w-full grid gap-lg`, 
+    _: `flex flex-col overflow-hidden gap-sm`, 
     projectHelp: `justify-self-end`,
+    projectsSection: `w-full flex flex-col gap-md overflow-y-scroll p-sm grow`, 
 }

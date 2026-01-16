@@ -2,13 +2,14 @@ import React from "react"
 
 import { Box, Divider, Typography } from "@mantine/core"
 import { BlogPostPreview } from "../components/BlogPostPreview"
-import { SearchBar } from "../components/SearchBar"
+import { SearchBar } from "../components/Components"
 import { AppContext } from "../app"
 import type { BlogHeader } from "../components/types"
 
 export function BlogPage() {
     const {client} = React.useContext(AppContext)
     const [blogData, setBlogData] = React.useState([] as BlogHeader[])
+    const [filters, setFilters] = React.useState([] as string[])
 
     React.useEffect(() => {
         (async() => {
@@ -21,7 +22,7 @@ export function BlogPage() {
         <Box className={styles.header.container}>
             <Typography>Blog</Typography>
             <Divider />
-            <SearchBar />
+            <SearchBar setFilters={setFilters} sortOptions={[]} />
         </Box>
         <Box className={styles.body.container}>
             <Box className={styles.body.main}> 
