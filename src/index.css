@@ -4,19 +4,60 @@
 @tailwind components;
 @tailwind utilities;
 
-@utility font-header {
-  @apply text-balance tracking-wider uppercase;
-  font-family:'Times New Roman', Times, serif; 
+
+@utility card {
+  @apply shadow-[3px_3px_0px_rgba(0,0,0,0.03)] ; 
+}
+
+@utility font-title {
+  @apply text-balance tracking-wider uppercase font-bold text-[30px];
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+@utility font-subtitle {
+  @apply text-balance tracking-wide font-mono opacity-80 text-[25px];
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
 @utility font-subheader {
-  @apply text-balance tracking-wide;
-  font-family: 'Times New Roman', Times, serif; 
+  @apply font-mono tracking-widest opacity-40;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; 
 }
 
+@utility font-header {
+  @apply text-balance tracking-wide font-mono opacity-80 text-[10px];
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+@utility font-body {
+  @apply leading-relaxed font-mono;
+  font-family: ui-serif, 'IBM Plex Mono', monospace;
+}
+
+@utility font-label {
+  @apply tracking-widest leading-relaxed font-mono text-[8px] opacity-50; 
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+
 @utility font-subtext {
-  @apply text-sm; 
-  font-family: monospace; 
+  @apply font-bold tracking-tighter; 
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; 
+}
+
+@keyframes animatedBackground {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@utility animate-slide {
+  background-size: 500px 100%;
+  background-repeat: repeat-x;
+  animation: animatedBackground 60s linear infinite alternate;
 }
 
 

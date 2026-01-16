@@ -1,5 +1,11 @@
 import type { Components } from "react-markdown"
 import { Caption } from "./Caption";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+export function StyledMarkdown(props:{className?:string, children:string|undefined|null}){
+    return <Markdown remarkPlugins={[remarkGfm]} components={MarkdownStyle} {...props}/>
+}
 
 export const MarkdownStyle:Components = {
     // Rewrite `em`s (`*like so*`) to `i` with a red foreground color.

@@ -78,8 +78,7 @@ export function App() {
 
 const styles = {
     container: `
-        h-screen w-screen 
-        pl-25 pr-25
+        h-screen  w-screen px-[min(30vw,15%)]
         overflow-y-scroll
         grid grid-cols-1 grid-rows-[auto_1fr]
         `,

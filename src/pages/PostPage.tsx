@@ -3,12 +3,10 @@ import { Box, Divider, Skeleton, Typography } from "@mantine/core";
 import { Link, useLoaderData } from "react-router";
 import { MainPage } from "../components/MainPage";
 import { LinkButtonGroup, StatusGrid, TechMakeupBar } from "../components/ProjectPreview";
-import { formatDate, resolvePreload } from '../components/Utils';
-import Markdown, { type Components } from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { formatDate } from '../components/Utils';
 import { type GitRevision, type ProjectHeader, type BlogHeader, type PostPageData, type Preload } from '../components/types';
 import type { PortfolioClient } from '../components/PortfolioClient';
-import { MarkdownStyle } from '../components/MarkdownStyle';
+import { StyledMarkdown } from '../components/MarkdownStyle';
 import { SideNav, type SideNavElement } from '../components/SideNav';
 
 
@@ -88,7 +86,7 @@ export function PostPage() {
                 <SideNav rootElements={sideNavElements} />
                 {pageData.isProject ? <ProjectBanner data={pageData.headerData[0] as ProjectHeader} />: <BlogBanner data={pageData.headerData[0] as BlogHeader} />}
                 <Box ref={bodyRef} className={styles.body}>
-                    <Markdown components={MarkdownStyle} remarkPlugins={[remarkGfm]}>{pageData.postData.postContent}</Markdown>
+                    <StyledMarkdown>{pageData.postData.postContent}</StyledMarkdown>
                 </Box>  
                 {pageData.isProject && <ChangeLog title='Project ChangeLog' revisions={pageData.projChangelog} />}
                 <ChangeLog title='Post ChangeLog' revisions={pageData.postChangelog} />
@@ -140,7 +138,7 @@ function RevisionItem(props:{revision:GitRevision}) {
             <Typography>{props.revision.title}</Typography>
             <Link to={props.revision.url}><Typography>{props.revision.id.substring(0, 7)}</Typography></Link>
         </Box>
-        <Markdown>{props.revision.body}</Markdown>
+        <StyledMarkdown>{props.revision.body}</StyledMarkdown>
     </Box>
 }
 

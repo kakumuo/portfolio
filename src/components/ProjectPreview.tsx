@@ -56,18 +56,28 @@ function StatusGridCaption(props:{data:ProjectHeader}) {
 }
 
 export function TechMakeupBar(props:{makeup:MakeupLayer[]}) {
-    return <Box className={styles.TMB.container}>
-        {
-            props.makeup.map((layer, layerI) => 
-                <Box className={styles.TMB.list} key={layerI}>  
-                    <Typography>{layer.name}</Typography>
-                    {layer.items.map((cur, curI) => 
-                        <Typography key={curI} className={styles.TMB.item} style={{flex: cur.percentage}}>{`${cur.tech} (${cur.percentage}%)`}</Typography>
-                    )}
-                </Box>
-            )
-        }
+    return <Box className={styles.TMB._}>
+        {props.makeup.map((m, mI) => <TechMakeupLayer layer={m} key={mI} />)}
+    </Box>
+}
 
+function TechMakeupLayer({layer}:{layer:MakeupLayer}) {
+    const colors = ['black', 'gray', 'lightgray', 'slate']
+
+    return <Box className={styles.TMB.layer._}>
+        <Typography className={styles.TMB.layer.title}>{layer.name}</Typography>
+        <Box 
+            style={{gridTemplateColumns: layer.items.map(i => i.percentage + "fr").join(" ")}} 
+            className={styles.TMB.layer.row._ }
+        >
+            {layer.items.map((i, iI) => {
+                const targetColor = colors[iI % colors.length]; 
+                return <>
+                        <Box key={`bar-${iI}`} className={styles.TMB.layer.row.top} style={{backgroundColor: targetColor, color: targetColor}} />
+                        <Typography key={`text-${iI}`} className={styles.TMB.layer.row.bot}>{" // " + i.tech}</Typography>
+                    </>
+            })}
+        </Box>
     </Box>
 }
 
@@ -88,7 +98,6 @@ export function StatusGrid(props:{data:ProjectHeader,  className?:string}){
         output.push(...(endDate.getDate()).toString().padStart(2, "0").split(""));
 
         output.push(data.type[0], data.taskSize[0], data.complexity[0], data.status[0]);
-        console.log(startDate.getDate()); 
 
         return output; 
     }, [props.data]);
@@ -100,7 +109,7 @@ export function StatusGrid(props:{data:ProjectHeader,  className?:string}){
 
 const styles = {
     container: `w-full grid grid-cols-1 grid-rows-[auto_1fr_auto] gap-md`, 
-    header: `w-full grid grid-cols-[1fr_auto_auto] gap-sm `, 
+    header: `w-full grid grid-cols-[1fr_auto_auto] gap-sm`, 
     body: `w-full flex gap-sm`, 
     footer: `w-full grid`,
     SG:{
@@ -110,15 +119,23 @@ const styles = {
             text-center
             select-none
             float-left
+            font-subheader
         `, 
         item:`font-serif`, 
         captionContainer: `grid`, 
         captionText: `grid grid-rows-auto grid-cols-2`, 
     }, 
     TMB: {
-        container: `grid`, 
-        list: `border grid grid-cols-[auto_repeat(auto-fill, 1fr)] grid-rows-1`, 
-        item: `border text-center`
+        _: `grid`, 
+        layer:{
+            _: `grid grid-cols-1 grid-rows-[auto_1fr]`, 
+            title: `text-end text-[12px] font-subtext`, 
+            row: {
+                _: `grid grid-rows-[auto_1fr]`, 
+                top: `row-start-1 h-2 w-full border first:rounded-l-full [&:nth-last-child(2)]:rounded-r-full`, 
+                bot: `row-start-2 text-end text-[10px] text-nowrap font-label`, 
+            }
+        }
     }
 }
 

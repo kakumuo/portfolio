@@ -41,10 +41,10 @@ function HeaderLink(props:{link:string, label:string, className?:string}) {
 }
 
 export function PageHeader() {
-    return <Box id="top" className={styles.pageHeader.container}>
-        <Link to={"/"} className={`${styles.pageHeader.element}`}>Some Name</Link>
+    return <Box id="top" className={styles.pageHeader._}>
+        <Link to={"/"} className={`${styles.pageHeader.$}`}>Some Name</Link>
         <Divider className={styles.pageHeader.divider} />
-        {headerLinks.map((link, linkI) => <HeaderLink className={`${styles.pageHeader.element}`} key={linkI} {...link}/>)}
+        {headerLinks.map((link, linkI) => <HeaderLink className={`${styles.pageHeader.$}`} key={linkI} {...link}/>)}
     </Box>
 }
 
@@ -67,11 +67,12 @@ const styles = {
         grid grid-cols-1 grid-rows-[auto_1fr]
         `,
     pageHeader: {
-        container: `relative w-full flex gap-sm`, 
-        element: `
+        _: `relative w-full flex gap-sm items-center`, 
+        $: `
             bg-white z-10 p-sm align-middle
-            first:mr-auto first:ml-10 first:text-xl first:font-header
-            last:mr-10`,
+            first:mr-auto first:ml-10 first:font-title
+            last:mr-10
+            transition hover:underline`,
         divider: `absolute top-1/2 w-full bg-blue`, 
         header: `w-full flex gap-md`, 
         footer: `w-full flex gap-md`

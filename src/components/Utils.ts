@@ -1,4 +1,3 @@
-import type {Components} from "react-markdown";
 import type { Preload } from "./types";
 
 
