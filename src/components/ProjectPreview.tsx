@@ -81,7 +81,7 @@ function TechMakeupLayer({layer}:{layer:MakeupLayer}) {
     </Box>
 }
 
-export function StatusGrid(props:{data:ProjectHeader,  className?:string}){
+export function StatusGrid(props:{data:ProjectHeader,  className?:string, id?:string}){
     const chars = React.useMemo(() => {
         const output:string[] = [];
         const data = props.data; 
@@ -102,7 +102,7 @@ export function StatusGrid(props:{data:ProjectHeader,  className?:string}){
         return output; 
     }, [props.data]);
     
-    return <Box className={`${styles.SG.container} ${props.className}`}>
+    return <Box id={props.id} className={`${styles.SG.container} ${props.className}`}>
         {chars.map((c, cI) => <Typography className={styles.SG.item} key={cI}>{c}</Typography>)}
     </Box>
 }

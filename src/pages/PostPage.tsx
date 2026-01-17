@@ -61,7 +61,6 @@ export function PostPage() {
         const tmp:SideNavElement[]= [{
             href: '#title', 
             label: '[Top]', 
-            priority: 0, 
             yPos: 0
         }]; 
         const targetAnchors = ['h1', 'h2', 'h3', 'h4', 'h5']
@@ -71,8 +70,7 @@ export function PostPage() {
                 tmp.push({
                     label: child.textContent,
                     href: "#" + child.id, 
-                    priority: targetAnchors.indexOf(child.tagName.toLowerCase()), 
-                    yPos: (child as HTMLDivElement).offsetTop 
+                    yPos: (child as HTMLDivElement).offsetTop -  (child as HTMLDivElement).scrollHeight
                 })
             }
         }
@@ -101,7 +99,7 @@ export function PostPage() {
         {!pageData || !pageData.headerData || !pageData.postData ? 
             <Skeleton variant='text' /> 
             :<>
-                <SideNav rootElements={sideNavElements} scrollY={scrollY} maxScrollY={bodyRef.current?.scrollHeight}/>
+                <SideNav rootElements={sideNavElements} scrollY={scrollY} maxScrollY={bodyRef.current?.scrollHeight} parentRef={mainRef}/>
                 {pageData.isProject ? <ProjectBanner data={pageData.headerData[0] as ProjectHeader} />: <BlogBanner data={pageData.headerData[0] as BlogHeader} />}
                 <StyledMarkdown className='mb-[40vh]' ref={bodyRef}>{pageData.postData.postContent}</StyledMarkdown>
                 {pageData.isProject && <ChangeLog title='Project ChangeLog' revisions={pageData.projChangelog} />}
@@ -121,8 +119,8 @@ function ProjectBanner(props:{data:ProjectHeader}) {
 
     return <Box className={styles._}>
         <Box className={styles.header}>
-            <StatusGrid className='text-[.8em]' data={props.data} />
-            <Typography className='font-title' id='title'>{props.data.title}</Typography>
+            <StatusGrid className='text-[.8em]' id='title' data={props.data} />
+            <Typography className='font-title'>{props.data.title}</Typography>
             <Typography className='font-subheader justify-self-end self-end'>{formatDate(props.data.startDate)}</Typography>
         </Box>
         <Divider />
