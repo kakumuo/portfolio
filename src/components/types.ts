@@ -21,7 +21,8 @@ type BlogHeader = {
     title:string, 
     createDate:number, 
     tags:string[], 
-    summary:string
+    summary:string, 
+    bannerImage:string,
 }
 
 type ProjectHeader = {

@@ -1,0 +1,42 @@
+{
+    "id": "personal-site",
+    "title": "Portfolio Site",
+    "summary": "A simple portfolio site",
+    "startDate": 1768613499865,
+    "endDate": 1769613499865,
+    "hasPost": true,
+    "git": "https://github.com/kakumuo/portfolio",
+    "url": "https://kakumuo.github.io/portfolio/",
+    "complexity": "medium",
+    "status": "inprogress",
+    "taskSize": "large",
+    "type": "web-app",
+    "makeupLayers": [
+      {
+        "name": "Frontend",
+        "items": [
+          {
+            "tech": "React",
+            "percentage": 1
+          }, 
+          {
+            "tech": "React 2",
+            "percentage": 30
+          }, 
+          {
+            "tech": "React 3",
+            "percentage": 40
+          }
+        ]
+      },
+      {
+        "name": "Backend",
+        "items": [
+          {
+            "tech": "GIT",
+            "percentage": 100
+          }
+        ]
+      }
+    ]
+  }

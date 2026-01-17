@@ -30,7 +30,7 @@
 }
 
 @utility font-body {
-  @apply leading-relaxed font-mono;
+  @apply leading-relaxed font-sans;
   font-family: ui-serif, 'IBM Plex Mono', monospace;
 }
 
@@ -113,6 +113,28 @@
   }
   .m-xl {
     @apply m-12;
+  }
+}
+
+@layer utilities {
+  .scrollbar::-webkit-scrollbar {
+    width: 20px;
+    height: 20px;
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    border-radius: 100vh;
+    background: #f7f4ed;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: #e0cbcb;
+    border-radius: 100vh;
+    border: 3px solid #f6f7ed;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #c0a0b9;
   }
 }
 

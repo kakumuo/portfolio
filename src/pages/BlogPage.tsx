@@ -2,77 +2,130 @@ import React from "react"
 
 import { Box, Divider, Typography } from "@mantine/core"
 import { BlogPostPreview } from "../components/BlogPostPreview"
-import { SearchBar } from "../components/Components"
+import { SearchBar, type SortOption } from "../components/Components"
 import { AppContext } from "../app"
 import type { BlogHeader } from "../components/types"
+import { BlogPreview } from "./HomePage"
+import { SectionHeader } from "../components/SectionHeader"
+import { Caption } from "../components/Caption"
+
+
+const sampleBlogPosts:BlogHeader[] = [
+  {
+    "id": "about-me",
+    "title": "About Me",
+    "createDate": 123432,
+    "summary": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi dolore omnis dignissimos adipisci doloremque necessitatibus culpa nisi nesciunt delectus?",
+    "tags": [
+      "info"
+    ], 
+    "bannerImage": "https://placehold.co/600x400/EEE/31343C"
+  }, 
+	{
+    "id": "kla-flee",
+    "title": "Another Post",
+    "createDate": 123432,
+    "summary": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Neque!",
+    "tags": [
+      "info"
+    ], 
+    "bannerImage": "https://placehold.co/600x400/EEE/31343C"
+  }, 
+    {
+    "id": "smabout-me",
+    "title": "Some Post",
+    "createDate": 123432,
+    "summary": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas, minus!",
+    "tags": [
+      "info"
+    ], 
+    "bannerImage": "https://placehold.co/600x400/EEE/31343C"
+  }, 
+  {
+    "id": "smabout-me",
+    "title": "Some Post",
+    "createDate": 123432,
+    "summary": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas, minus!",
+    "tags": [
+      "info"
+    ], 
+    "bannerImage": "https://placehold.co/600x400/EEE/31343C"
+  }
+]
+
+
+
+
+enum SortOptionType {
+    TITLE = 'Name', 
+    CREATE_DATE = 'Create Date'
+}
 
 export function BlogPage() {
     const {client} = React.useContext(AppContext)
     const [blogData, setBlogData] = React.useState([] as BlogHeader[])
     const [filters, setFilters] = React.useState([] as string[])
+    const [sort, setSort] = React.useState([] as SortOption[]); 
 
     React.useEffect(() => {
         (async() => {
             const resp = await client.getBlogHeader({});
-            setBlogData(resp);  
+            // setBlogData(resp); 
+            setBlogData(sampleBlogPosts) 
         })(); 
     }, [])
 
+
+    const filterData = React.useMemo(() => {
+        let tmp = [...blogData]
+        if(filters.length > 0) {
+            tmp = blogData.filter(h => {
+                let didFilter = false; 
+                for(const f of filters) {
+                    if(f.trim() == "") continue; 
+                    if(JSON.stringify(h).toLowerCase().includes(f.toLowerCase())) {
+                        didFilter = true; 
+                        return true; 
+                    }
+                }
+
+                return didFilter; 
+            })
+        }
+
+        tmp.sort((a, b) => {
+            let curIndex = -1; 
+            if((curIndex = sort.findIndex(o => o.label == SortOptionType.TITLE)) != -1 && a.title.localeCompare(b.title) != 0) {
+                return  (sort[curIndex].asc ? 1 : -1) * a.title.localeCompare(b.title)
+            } else if ((curIndex = sort.findIndex(o => o.label == SortOptionType.CREATE_DATE)) != -1 && a.createDate - b.createDate != 0) {
+                return (sort[curIndex].asc ? 1 : -1) * a.createDate - b.createDate
+            }
+            else return 0; 
+        })
+
+        return tmp;         
+    }, [filters, blogData, sort])
+
+
     return <Box className={styles.container}>
-        <Box className={styles.header.container}>
-            <Typography>Blog</Typography>
-            <Divider />
-            <SearchBar setFilters={setFilters} sortOptions={[]} />
-        </Box>
-        <Box className={styles.body.container}>
-            <Box className={styles.body.main}> 
-                <BlogSection title="April 2025">
-                    {blogData.map((data, dataI) => <BlogPostPreview blogData={data} key={dataI} />)}
-                </BlogSection>
-
-                <BlogSection title="June 2024" />
-                <BlogSection title="May 2024" />
-            </Box>
-
-            <Box className={styles.body.aside.container}>
-                <Typography>Recent</Typography>
-                <Divider />
-                <ul>
-                    <li>2025-10 | Some Title 1</li>
-                    <li>2025-10 | Some Title 2</li>
-                    <li>2025-10 | Some Title 3</li>
-                    <li>2025-10 | Some Title 4</li>
-                </ul>
-            </Box>
-        </Box>
-
-    </Box>
-}
-
-function BlogSection(props:{title:string, children?:any}) {
-    return <Box className={styles.blogSection.container}>
-        <Typography>{props.title}</Typography>
-        <Box className={styles.blogSection.content}>
-            {props.children}
+        <SectionHeader  title="Blog"/>
+        <SearchBar sortOptions={Object.values(SortOptionType)} setSort={setSort} setFilters={setFilters} />
+        <Box className={styles.body._}>
+            {filterData.map((b,bI) => <BlogPreview showSummary blog={b} key={bI} />)}
         </Box>
     </Box>
 }
 
 const styles = {
-    container: ``, 
+    container: `flex flex-col overflow-hidden`, 
     header: {
-        container: ``, 
+        _: ``, 
     }, 
     body: {
-        container: `grid grid-cols-[1fr_auto] grid-rows-1 gap-lg`, 
-        main: `grid grid-rows-auto grid-cols-1 gap-lg`, 
-        aside: {
-            container: `flex flex-col`, 
-            section: ``, 
-        }, 
+        _: `flex flex-col gap-sm overflow-y-scroll p-sm grow`, 
     },
     blogSection: {
-        container: `grid grid-rows-auto grid-cols-1 gap-sm`, 
+        _: `grid grid-rows-auto grid-cols-1 gap-sm`, 
         content: `grid grid-rows-auto grid-cols-1 gap-md`
     }, 
 }

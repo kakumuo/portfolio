@@ -65,7 +65,8 @@ const sampleBlogPosts:BlogHeader[] = [
     "summary": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi dolore omnis dignissimos adipisci doloremque necessitatibus culpa nisi nesciunt delectus?",
     "tags": [
       "info"
-    ]
+    ], 
+    "bannerImage": "https://placehold.co/600x400/EEE/31343C"
   }, 
 	{
     "id": "kla-flee",
@@ -74,7 +75,8 @@ const sampleBlogPosts:BlogHeader[] = [
     "summary": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Neque!",
     "tags": [
       "info"
-    ]
+    ], 
+    "bannerImage": "https://placehold.co/600x400/EEE/31343C"
   }, 
     {
     "id": "smabout-me",
@@ -83,7 +85,8 @@ const sampleBlogPosts:BlogHeader[] = [
     "summary": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas, minus!",
     "tags": [
       "info"
-    ]
+    ], 
+    "bannerImage": "https://placehold.co/600x400/EEE/31343C"
   }, 
   {
     "id": "smabout-me",
@@ -92,7 +95,8 @@ const sampleBlogPosts:BlogHeader[] = [
     "summary": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas, minus!",
     "tags": [
       "info"
-    ]
+    ], 
+    "bannerImage": "https://placehold.co/600x400/EEE/31343C"
   }
 ]
 
@@ -277,7 +281,7 @@ function BlogDisplay({blogs}:{blogs:BlogHeader[]}) {
     </Box>
 }
 
-function BlogPreview({blog, showSummary}:{blog:BlogHeader, showSummary?:boolean}){
+export function BlogPreview({blog, showSummary}:{blog:BlogHeader, showSummary?:boolean}){
     const [hover, setHover] = React.useState(false); 
 
     return <Link to={`blog/${blog.id}`} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
@@ -294,7 +298,7 @@ function BlogPreview({blog, showSummary}:{blog:BlogHeader, showSummary?:boolean}
           <Corners className="absolute top-0 left-0" corner="tl" />
           <Corners className="absolute bottom-0 right-0" corner="br" />
         </Box>
-        <img className={styles.blogDisplay.preview.img} src="https://placehold.co/600x400/EEE/31343C" />        
+        <img className={styles.blogDisplay.preview.img} src={blog.bannerImage} />        
         <Box className={styles.blogDisplay.preview.header._}>
           <Typography className={styles.blogDisplay.preview.header.numLabel}>//BLOG-{threeDigitCode(blog.title)}</Typography>
           <Box className={styles.blogDisplay.preview.header.indicator} style={{borderColor: 'orange', backgroundColor: 'orange'}} />
@@ -317,21 +321,21 @@ const styles = {
           list: `grid grid-cols-1 grid-rows-auto gap-md`, 
         },
         preview: {
-          _: `relative flex flex-col z-1 p-sm border overflow-hidden border-orange-300 border-2 group`,
+          _: `relative flex flex-col z-1 p-sm overflow-hidden group`,
           img:`absolute left-1/2 top-1/2 -translate-1/2 -z-2 w-full h-auto objectfit-contain opacity-20`, 
           header:{
             _: `flex items-center`, 
             numLabel: `mr-auto font-subheader`, 
             indicator: `rounded-full h-2 aspect-1/1 border animate-pulse`, 
           }, 
-          title: `col-start-2 row-start-1 row-span-1 col-span-full flex items-center mt-auto mb-auto font-subtitle italic`, 
+          title: `col-start-2 row-start-1 row-span-1 col-span-full flex items-center mt-auto mb-auto font-subtitle italic group-hover:text-orange-500`, 
           sub: `col-start-2 ro-start-2 row-span-1 col-span-full flex items-center`, 
 
           sub_$:`
             first:mr-auto first:text-[14px] first:font-subtext
             not-first:border not-first:bg-white not-first:pl-4 not-first:pr-4 not-first:font-label`, 
         }, 
-        summary: ``, 
+        summary: `font-body text-[.8em]`, 
     },
 
     _: `h-full w-full flex flex-col gap-lg`,

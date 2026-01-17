@@ -70,7 +70,13 @@ export function App() {
     , [preload]); 
 
     return <AppContext value={{client, preload, setPreload}}>
-        <Box className={styles.container}>
+        <Box className={styles.container}
+            style={{
+                scrollbarWidth: 'thin', 
+                scrollbarColor: 'orange transparent',
+                scrollbarGutter: 'stable'
+            }}
+        >
             <RouterProvider router={router} />
         </Box>
     </AppContext>

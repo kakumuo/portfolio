@@ -61,18 +61,18 @@ export const Caption = (props:{caption?:any, children:any, link?:string, classNa
     };
 
     return (
-        <span className={`${props.className??""} ${styles.container}`}  
+        <span className={`${props.className} ${styles.container}`}  
             onMouseEnter={handleMouseEnter} 
             onMouseLeave={handleMouseLeave} 
             onMouseMove={handleMouseMove}
         >
             {
             props.link ?             
-                <Link to={props.link} className={`hover:text-primary cursor-${props.link ? 'pointer' : 'auto'}`}>
+                <Link to={props.link} className={`cursor-${props.link ? 'pointer' : 'auto'}`}>
                     {props.children}
                 </Link>
                 : 
-                <span className={`hover:text-primary cursor-${props.link ? 'pointer' : 'auto'}`}>
+                <span className={`cursor-${props.link ? 'pointer' : 'auto'}`}>
                     {props.children}
                 </span>
             }
@@ -95,6 +95,6 @@ export const Caption = (props:{caption?:any, children:any, link?:string, classNa
 };
 
 const styles = {
-    container: `relative font-[bolder] grid`, 
+    container: `relative grid`, 
     caption: `fixed border z-4 grid grid-cols-auto grid-rows-auto`,
 }
