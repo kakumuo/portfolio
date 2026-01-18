@@ -1,16 +1,17 @@
 import { Box, Typography } from '@mantine/core';
 import * as React from 'react'
 import { Link } from 'react-router';
+import { Corners } from './Components';
 
 
-export const Caption = (props:{caption?:any, children:any, link?:string, className?:string}) => {
+export const Caption = (props:{caption?:any, link?:string} & React.ComponentPropsWithoutRef<'span'>) => {
     const captionRef = React.useRef<HTMLDivElement>(null); 
     const [pos, setPos] = React.useState({x:0, y:0});
     const [xPos, setXPos] = React.useState(0);
     const [yPos, setYPos] = React.useState(0);
     const [hoverTimeout, setHoverTimeout] = React.useState(setTimeout(()=>{}, 1))
     const HOVER_DELAY_MS = 1000 * .2
-    const OFFSET = {x: 10, y: 10}; // Changed to numbers for easier calculations
+    const OFFSET = {x: 25, y: 25}; // Changed to numbers for easier calculations
 
     const [isHover, setIsHover] = React.useState({val: false})
     const [show, setShow] = React.useState(false); 
@@ -44,8 +45,8 @@ export const Caption = (props:{caption?:any, children:any, link?:string, classNa
         const captionHeight = captionRef.current.offsetHeight;
 
         // Calculate new positions
-        let newX = mouseX + OFFSET.x;
-        let newY = mouseY + OFFSET.y;
+        let newX =  (mouseX + OFFSET.x);
+        let newY =  (mouseY + OFFSET.y);
 
         // Check boundaries
         if (newX + captionWidth > window.innerWidth) {
@@ -65,6 +66,7 @@ export const Caption = (props:{caption?:any, children:any, link?:string, classNa
             onMouseEnter={handleMouseEnter} 
             onMouseLeave={handleMouseLeave} 
             onMouseMove={handleMouseMove}
+            id={props.id}
         >
             {
             props.link ?             
@@ -72,7 +74,7 @@ export const Caption = (props:{caption?:any, children:any, link?:string, classNa
                     {props.children}
                 </Link>
                 : 
-                <span className={`cursor-${props.link ? 'pointer' : 'auto'}`}>
+                <span className={`cursor-${props.link ? 'pointer' : 'auto'} group-hover/caption:text-orange-500 transition`}>
                     {props.children}
                 </span>
             }
@@ -82,10 +84,14 @@ export const Caption = (props:{caption?:any, children:any, link?:string, classNa
                     <span 
                         className={`${styles.caption}`}
                         // style={{left: pos.x, top:pos.y, visibility: show ? 'visible': 'hidden'}}
-                        style={{left: xPos, top:yPos, visibility: show ? 'visible': 'hidden'}}
-                        // style={{left: pos.x, top:pos.y}}
+                        // style={{left: xPos, top:yPos, visibility: show ? 'visible': 'hidden'}}
+                        style={{left: xPos, top:yPos}}
                         ref={captionRef}
                     >
+                        <Corners className='absolute top-0 left-0 stroke-orange-500' corner='tl' />
+                        <Corners className='absolute top-0 right-0 stroke-orange-500' corner='tr' />
+                        <Corners className='absolute bottom-0 left-0 stroke-orange-500' corner='bl' />
+                        <Corners className='absolute bottom-0 right-0 stroke-orange-500' corner='br' />
                         {props.caption}
                     </span>
             }
@@ -95,6 +101,6 @@ export const Caption = (props:{caption?:any, children:any, link?:string, classNa
 };
 
 const styles = {
-    container: `relative grid`, 
-    caption: `fixed border z-4 grid grid-cols-auto grid-rows-auto`,
+    container: `relative grid group/caption`, 
+    caption: `fixed z-100 grid grid-cols-auto grid-rows-auto p-2 px-4 bg-white/90 invisible group-hover/caption:visible group-hover/caption:opacity-100 opacity-0 transition`,
 }

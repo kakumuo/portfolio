@@ -3,13 +3,14 @@ import * as React from 'react';
 import { Box, Divider, Typography } from "@mantine/core";
 import { Button as Button } from '../components/Components';
 import { MainPage } from "../components/MainPage";
-import { StatusGrid, TechMakeupBar } from "../components/ProjectPreview";
+import { StatusGridCaption, TechMakeupBar } from "../components/ProjectPreview";
 import { AppContext } from "../app";
 import type { BlogHeader, PostData, ProjectHeader } from '../components/types';
 import {StyledMarkdown} from '../components/MarkdownStyle';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { formatDate, threeDigitCode } from '../components/Utils';
 import { Corners } from '../components/Components';
+import { LoadingPage } from './LoadingPage';
 
 
 const sampleProjData:ProjectHeader[] = [
@@ -109,6 +110,7 @@ export function HomePage(){
     const [featuredProjData, setFeaturedProjData] = React.useState([] as ProjectHeader[]); 
     const [loaded, setLoaded] = React.useState(false); 
     const [tagline, setTagline] = React.useState("")
+    const navigate = useNavigate(); 
 
     React.useEffect(() => {      
         ;(async() => {
@@ -118,14 +120,22 @@ export function HomePage(){
                 client.getProjectHeader({}), 
             ])
 
-            setOverview(overviewData) 
+            if(!overviewData.success || !blogData.success || !projData.success) {
+              const target = [overviewData, blogData, projData].find(d => d.success == false); 
+              navigate('/error', {
+                replace: true, 
+                state: target!
+              })
+              return; 
+            }
+            setOverview(overviewData.data);          
 
-            // const blogRes = blogData.sort((a, b) => b.createDate - a.createDate).filter((_, i) => i < 3); 
-            const blogRes = sampleBlogPosts.sort((a, b) => b.createDate - a.createDate).filter((_, i) => i < 3); 
+            const blogRes = blogData.data.sort((a, b) => b.createDate - a.createDate).filter((_, i) => i < 3); 
+            // const blogRes = sampleBlogPosts.sort((a, b) => b.createDate - a.createDate).filter((_, i) => i < 3); 
             setFeaturedBlogData(blogRes); 
 
-            const projRes = sampleProjData.sort((a, b) => b.endDate - a.endDate).filter((_, i) => i < 3); 
-            // const projRes = projData.sort((a, b) => b.endDate - a.endDate).filter((_, i) => i < 3); 
+            // const projRes = sampleProjData.sort((a, b) => b.endDate - a.endDate).filter((_, i) => i < 3); 
+            const projRes = projData.data.sort((a, b) => b.endDate - a.endDate).filter((_, i) => i < 3); 
             setFeaturedProjData(projRes); 
 
             setLoaded(true); 
@@ -146,7 +156,7 @@ export function HomePage(){
         }
     }, []); 
 
-    return <>{loaded && 
+    return <>{!loaded ? <LoadingPage /> :
     <MainPage className={styles._}>
         <Typography className={styles.tagline}>creating // {tagline}</Typography>
         <Box className={styles.textheader}><StyledMarkdown >{overview.postContent}</StyledMarkdown></Box>
@@ -170,13 +180,10 @@ function DisplayHeader(props:{label:string, to:string, color:string}){
 }
 
 const SHOW_DUR_MS = 5 * 1000; 
-const SHOW_UNIT_MS = .5 * 1000; 
 function ProjectDisplay({projects}:{projects:ProjectHeader[]}){
     const [projI, setProjI] = React.useState(0); 
     const curProj = projects[projI]; 
     const [curDur, setCurDur] = React.useState(0); 
-    const [handle, setHandle] = React.useState(-1); 
-    const [hover, setHover] = React.useState(false); 
 
     const nextProj = (inc:boolean) => {
         setCurDur(0); 
@@ -187,44 +194,6 @@ function ProjectDisplay({projects}:{projects:ProjectHeader[]}){
             setProjI(val => val == 0 ? projects.length - 1 : val - 1)
         }
     }
-
-    const handleMouseEnter = () => {
-        clearInterval(handle); 
-        setHover(true); 
-        setHandle(-1); 
-    }
-
-    const handleMouseLeave = () => {
-      setHover(false); 
-      const handle = setInterval(() => {
-          setCurDur(dur => {
-              dur += SHOW_UNIT_MS
-              if(dur > SHOW_DUR_MS) {
-                  nextProj(true); 
-                  return 0; }
-              else return dur; 
-          });
-      }, SHOW_UNIT_MS);
-      setHandle(handle); 
-    }
-
-    React.useEffect(() => {
-        const handle = setInterval(() => {
-            setCurDur(dur => {
-                dur += SHOW_UNIT_MS
-                if(dur >= SHOW_DUR_MS) {
-                    setProjI(val => (val + 1) % projects.length); 
-                    return 0; }
-                else return dur; 
-            });
-        }, SHOW_UNIT_MS);
-        setHandle(handle);
-
-        () => {
-            clearInterval(handle); 
-            setHandle(-1); 
-        }
-    }, []); 
 
     return <Box className={styles.projDisplay._}>
         <DisplayHeader label='Project // Featured' color='orange' to='/projects' />
@@ -247,13 +216,14 @@ function ProjectDisplay({projects}:{projects:ProjectHeader[]}){
 
 export function ProjectPreview({curProj}:{curProj:ProjectHeader }){
   return <Box className={styles.projDisplay.main._}>
+            <Link className='w-full h-full absolute top-0 left-0' to={`/projects/${curProj.id}`} />
             <Box className='absolute w-full h-full top-0 left-0 bg-black/2 -z-1
               transition duration-300 ease-in-out
               bg-black/2 opacity-0
               group-hover:opacity-100
             '>
-              <Corners className='absolute top-0 left-0' corner='tl' />
-              <Corners className='absolute bottom-0 right-0' corner='br' />
+              <Corners className='absolute top-0 left-0 stroke-black' corner='tl' />
+              <Corners className='absolute bottom-0 right-0 stroke-black' corner='br' />
             </Box>
             <Typography className='font-subheader'>// PROJ-{threeDigitCode(curProj.id)}</Typography>
             <Box className={styles.projDisplay.header._}>
@@ -266,7 +236,7 @@ export function ProjectPreview({curProj}:{curProj:ProjectHeader }){
             <Typography className={styles.projDisplay.main.summary}>{curProj.summary}</Typography>
 
             <Box className={styles.projDisplay.main.footer}>
-                <StatusGrid data={curProj} />
+                <StatusGridCaption data={curProj} />
                 <TechMakeupBar makeup={curProj.makeupLayers} />
             </Box>
         </Box>
@@ -284,33 +254,33 @@ function BlogDisplay({blogs}:{blogs:BlogHeader[]}) {
 export function BlogPreview({blog, showSummary}:{blog:BlogHeader, showSummary?:boolean}){
     const [hover, setHover] = React.useState(false); 
 
-    return <Link to={`blog/${blog.id}`} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-      <Box className={styles.blogDisplay.preview._}>
-        <Box
-          className={`
-            absolute w-full h-full top-0 left-0
-            transition duration-300 ease-in-out
-            -z-12
-            bg-black/5 opacity-0
-            group-hover:opacity-100
-          `}
-        >
-          <Corners className="absolute top-0 left-0" corner="tl" />
-          <Corners className="absolute bottom-0 right-0" corner="br" />
-        </Box>
-        <img className={styles.blogDisplay.preview.img} src={blog.bannerImage} />        
-        <Box className={styles.blogDisplay.preview.header._}>
-          <Typography className={styles.blogDisplay.preview.header.numLabel}>//BLOG-{threeDigitCode(blog.title)}</Typography>
-          <Box className={styles.blogDisplay.preview.header.indicator} style={{borderColor: 'orange', backgroundColor: 'orange'}} />
-        </Box>
-        <Typography style={{textDecoration: hover ? 'underline' : 'none'}} className={styles.blogDisplay.preview.title}>{blog.title}</Typography>
-        <Box className={styles.blogDisplay.preview.sub}>
-          <Typography className={styles.blogDisplay.preview.sub_$}>{formatDate(blog.createDate)}</Typography>
-          {blog.tags.map((t, tI) => <Typography className={styles.blogDisplay.preview.sub_$} key={tI}>{t}</Typography>)}
-        </Box>
+    return <Link to={`/blog/${blog.id}`} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+        <Box className={styles.blogDisplay.preview._}>
+          <Box
+            className={`
+              absolute w-full h-full top-0 left-0
+              transition duration-300 ease-in-out
+              -z-12
+              bg-black/5 opacity-0
+              group-hover:opacity-100
+            `}
+          >
+            <Corners className="absolute top-0 left-0 stroke-black" corner="tl" />
+            <Corners className="absolute bottom-0 right-0 stroke-black" corner="br" />
+          </Box>
+          <img className={styles.blogDisplay.preview.img} src={blog.bannerImage} />        
+          <Box className={styles.blogDisplay.preview.header._}>
+            <Typography className={styles.blogDisplay.preview.header.numLabel}>//BLOG-{threeDigitCode(blog.id)}</Typography>
+            <Box className={styles.blogDisplay.preview.header.indicator} style={{borderColor: 'orange', backgroundColor: 'orange'}} />
+          </Box>
+          <Typography style={{textDecoration: hover ? 'underline' : 'none'}} className={styles.blogDisplay.preview.title}>{blog.title}</Typography>
+          <Box className={styles.blogDisplay.preview.sub}>
+            <Typography className={styles.blogDisplay.preview.sub_$}>{formatDate(blog.createDate)}</Typography>
+            {blog.tags.map((t, tI) => <Typography className={styles.blogDisplay.preview.sub_$} key={tI}>{t}</Typography>)}
+          </Box>
 
-        {showSummary && <Box className={styles.blogDisplay.summary}>{blog.summary}</Box>}
-    </Box>
+          {showSummary && <Box className={styles.blogDisplay.summary}>{blog.summary}</Box>}
+      </Box>
     </Link>
 }
 
@@ -352,14 +322,14 @@ const styles = {
     projDisplay: {
         _: `h-full flex flex-col gap-md`, 
         main: {
-            _: `flex flex-col p-sm grow gap-sm relative group`, 
+            _: `flex flex-col p-sm grow gap-sm relative group h-auto`, 
             footer: `grid grid-cols-[auto_1fr] grid-rows-1 gap-sm`, 
             summary: `grow font-body`, 
         }, 
         progress: `grid flex h-2 border`,
         header: {
           _:  `grid grid-rows-1 grid-cols-[auto_1fr_auto_auto] items-center gap-sm`,
-          title: `font-subtitle group-hover:italic`, 
+          title: `font-subtitle group-hover:italic group-hover:underline group-hover:text-orange-500`, 
         },
         footer: {
             _:  `flex items-center justify-center gap-sm`,

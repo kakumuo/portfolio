@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Typography, Box, Input, Divider } from "@mantine/core";
 import { Caption } from "../components/Caption";
 import { ProjectPreview } from "./HomePage";
@@ -8,6 +8,7 @@ import { MainPage } from "../components/MainPage";
 import { SearchBar, type SortOption } from "../components/Components";
 import type { ProjectHeader } from "../components/types";
 import { AppContext } from "../app";
+import { LoadingPage } from "./LoadingPage";
 
 
 
@@ -152,12 +153,24 @@ export function ProjectsPage(){
     const [projectHeaders, setProjectHeaders]   = React.useState([] as ProjectHeader[]) 
     const [sort, setSort] = React.useState([] as SortOption[]); 
     const [filters, setFilters] = React.useState([] as string[]); 
+    const [loaded, setLoaded] = React.useState(false); 
+    const navigate = useNavigate(); 
 
     React.useEffect(() => {
         ; (async() => {
             const resp = await client.getProjectHeader({}); 
-            // setProjectHeaders(resp); 
-            setProjectHeaders(sampleProjData); 
+
+            if(!resp.success) {
+              navigate('/error', {
+                replace: true, 
+                state: resp
+              }); 
+              return; 
+            }
+
+            setProjectHeaders(resp.data); 
+            // setProjectHeaders(sampleProjData); 
+            setLoaded(true); 
         })(); 
     }, [])
 
@@ -193,21 +206,14 @@ export function ProjectsPage(){
         return tmp;         
     }, [filters, projectHeaders, sort])
 
-    return <MainPage className={styles._}>
-            <SectionHeader  title="Projects">
-                <Caption className={styles.projectHelp}>
-                    <Typography className={styles.projectHelp}>[?]</Typography>
-                </Caption>
-            </SectionHeader>
-
+    return <>{!loaded ? <LoadingPage  /> : <MainPage className={styles._}>
+            <SectionHeader  title="Projects" />
             <SearchBar setFilters={setFilters} sortOptions={Object.values(SortOptionType)} setSort={setSort} />
-            
             <Divider />
-
             <Box className={styles.projectsSection}>
-                {filterData.map(proj => <Link key={proj.id} to={`project/${proj.id}`} ><ProjectPreview curProj={proj} /></Link>)}
+                {filterData.map(proj => <Box><ProjectPreview curProj={proj} /></Box>)}
             </Box>
-        </MainPage>
+        </MainPage>}</>
     
 }
 

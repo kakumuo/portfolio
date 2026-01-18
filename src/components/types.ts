@@ -46,8 +46,13 @@ type MakeupLayer = {
     items: {tech:string, percentage:number}[]
 }
 
-type PortfolioClientHeaderResponse<T> = {
+type PortfolioClientResponse<T> = {
+    success:true, 
     data:T
+} | {
+    success:false, 
+    errorCode:number,
+    message:string
 }
 
 type PostData = {
@@ -65,6 +70,14 @@ type PostPageData = {
     projChangelog:GitRevision[],
 }
 
+type PostPageResponseData = {
+    isProject:boolean, 
+    headerData:PortfolioClientResponse<ProjectHeader[] | BlogHeader[]>, 
+    postData:PortfolioClientResponse<PostData>, 
+    postChangelog:PortfolioClientResponse<GitRevision[]>, 
+    projChangelog:PortfolioClientResponse<GitRevision[]>,
+}
+
 type Preload<T> = {
     [K in keyof T]: Promise<T[K]>
 }
@@ -75,7 +88,8 @@ export type {
     ProjectHeader, 
     BlogHeader, 
     MakeupLayer, 
-    PortfolioClientHeaderResponse, 
+    PortfolioClientResponse, 
+    PostPageResponseData,
     PostData, 
     PostPageData, 
     Preload

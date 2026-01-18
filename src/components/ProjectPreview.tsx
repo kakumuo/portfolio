@@ -1,38 +1,10 @@
 import { Box, Button, Typography } from "@mantine/core"
 import React from "react";
-import { data, Link } from "react-router"
+import { Link } from "react-router"
 import { Caption } from "./Caption";
 import { formatDate } from "./Utils";
-import type { MakeupLayer, ProjectHeader, PostPageData, Preload } from "./types";
-import { AppContext } from "../app";
-import { PreloadableLink } from "./Preloadable";
-import { loadPostPage } from "../pages/PostPage";
+import type { MakeupLayer, ProjectHeader } from "./types";
 
-export function ProjectPreview(props:{className?:string, data:ProjectHeader}){
-    const {client} = React.useContext(AppContext); 
-    
-    const handlePreload = () => loadPostPage(client, {} as Preload<PostPageData>, true, props.data.id)
-
-    return <Box className={styles.container}>
-        <Box className={styles.header}>
-            {
-                props.data.hasPost ?
-                <PreloadableLink className="justify-self-start" to={`/projects/${props.data.id}`} preLoad={handlePreload}>
-                    <Typography>{props.data.title}</Typography>
-                </PreloadableLink>
-                : <Typography className="justify-self-start">{props.data.title}</Typography>
-            }
-            <LinkButtonGroup data={props.data} />
-        </Box>
-        <Box className={styles.body}>
-            <Caption className="float-left" caption={<StatusGridCaption data={props.data} />}>
-                <StatusGrid data={props.data} />
-            </Caption>
-            <p>{props.data.summary}</p>
-        </Box>
-        <TechMakeupBar makeup={props.data.makeupLayers} />
-    </Box>
-}
 
 export function LinkButtonGroup(props:{data:ProjectHeader}) {
     return <Box className="flex">
@@ -41,18 +13,34 @@ export function LinkButtonGroup(props:{data:ProjectHeader}) {
     </Box>
 }
 
-function StatusGridCaption(props:{data:ProjectHeader}) {
-    return <Box className={styles.SG.captionContainer}>
-        {/* TODO: depending on whether having display in the container, remove "captionText" */}
-        <Box className={styles.SG.captionText}>
-            <Typography>Start Date:</Typography> <Typography> {formatDate(props.data.startDate)}</Typography>
-            <Typography>End Date:</Typography>   <Typography> {formatDate(props.data.endDate)}</Typography>
-            <Typography>Type:</Typography>       <Typography> {props.data.type}</Typography>
-            <Typography>Task Size:</Typography>  <Typography> {props.data.taskSize}</Typography>
-            <Typography>Complexity:</Typography> <Typography> {props.data.complexity}</Typography>
-            <Typography>Stauts:</Typography>     <Typography> {props.data.status}</Typography>
+export function StatusGridCaption(props:{data:ProjectHeader, id?:string, className?:string}) {
+    const bracketFirst = (text:string) => {
+        return `[${text.substring(0, 1)}]${text.substring(1)}`
+    }
+
+    const caption = <Box className={styles.SG.captionText._}>
+            <Typography className={styles.SG.captionText.$}>Start Date:</Typography> 
+            <Typography className={styles.SG.captionText.$}> {formatDate(props.data.startDate)}</Typography>
+
+            <Typography className={styles.SG.captionText.$}>End Date:</Typography>   
+            <Typography className={styles.SG.captionText.$}> {formatDate(props.data.endDate)}</Typography>
+
+            <Typography className={styles.SG.captionText.$}>Type:</Typography>       
+            <Typography className={styles.SG.captionText.$}> {bracketFirst(props.data.type)}</Typography>
+
+            <Typography className={styles.SG.captionText.$}>Task Size:</Typography>  
+            <Typography className={styles.SG.captionText.$}> {bracketFirst(props.data.taskSize)}</Typography>
+
+            <Typography className={styles.SG.captionText.$}>Complexity:</Typography> 
+            <Typography className={styles.SG.captionText.$}> {bracketFirst(props.data.complexity)}</Typography>
+
+            <Typography className={styles.SG.captionText.$}>Stauts:</Typography>     
+            <Typography className={styles.SG.captionText.$}> {bracketFirst(props.data.status)}</Typography>
         </Box>
-    </Box>
+
+    return <Caption caption={caption} id={props.id} className={props.className} >
+        <StatusGrid data={props.data} />
+    </Caption>
 }
 
 export function TechMakeupBar(props:{makeup:MakeupLayer[]}) {
@@ -123,7 +111,10 @@ const styles = {
         `, 
         item:`font-serif`, 
         captionContainer: `grid`, 
-        captionText: `grid grid-rows-auto grid-cols-2`, 
+        captionText: {
+            _: `grid grid-rows-auto grid-cols-2`,
+            $: `odd:font-subtext odd:mr-4 even:font-body `, 
+        },
     }, 
     TMB: {
         _: `grid`, 

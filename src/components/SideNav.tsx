@@ -1,5 +1,5 @@
-import { Box, colorsTuple, Divider, Typography } from "@mantine/core";
-import React, { useState } from "react"; 
+import { Box, Typography } from "@mantine/core";
+import React from "react"; 
 import { HashLink } from 'react-router-hash-link';
 
 export type SideNavElement = {
@@ -10,9 +10,10 @@ export type SideNavElement = {
 
 
 export function SideNav(
-    {rootElements, scrollY, maxScrollY, parentRef}:
-    {rootElements:SideNavElement[], scrollY:number, maxScrollY:number, parentRef:React.RefObject<HTMLDivElement>}
+    {rootElements, scrollY, parentRef}:
+    {rootElements:SideNavElement[], scrollY:number, parentRef:React.RefObject<HTMLDivElement>}
 ){
+    
     const [windowHeight, setWindowHeight] = React.useState(0); 
     
     React.useEffect(() => {
@@ -27,12 +28,23 @@ export function SideNav(
         return  () => {
             observer.disconnect(); 
         }
-    }, [parentRef.current])
+    }, [parentRef.current]); 
+
+    const [isScrollable, maxScrollY] = React.useMemo(() => {
+        return [
+            parentRef.current && parentRef.current.scrollHeight > parentRef.current.clientHeight, 
+            (parentRef.current as any)?.scrollTopMax + parentRef.current?.clientTop
+        ]
+    }, [windowHeight, parentRef.current]); 
+
+    
 
     const ticks = React.useMemo(() => {
-        const MAX_TICK_COUNT = Math.min(windowHeight / 15, 50); 
+        const MAX_TICK_COUNT = Math.max(Math.min(maxScrollY / 20,50) - rootElements.length, 1);
         const res:({type: 'sub', yPos:number} | ({type: 'main'} & SideNavElement))[] = []
-        const tickSpacing = maxScrollY / MAX_TICK_COUNT; 
+        const tickSpacing = Math.max(maxScrollY, 1) / MAX_TICK_COUNT; 
+
+        console.log(tickSpacing); 
         
         if(rootElements.length > 0) 
             res.push({
@@ -60,11 +72,10 @@ export function SideNav(
         } 
 
         return res; 
-    }, [rootElements, windowHeight]); 
+    }, [rootElements, windowHeight, maxScrollY]); 
 
     const closestI = React.useMemo(() => {
         let closestI = 0; 
-
         if(ticks.length > 0) {
             const tmp = [...ticks]
             closestI = tmp.map((k, kI) => ({kI, yPos: k.yPos})).sort((a, b) => Math.abs(a.yPos - scrollY) - Math.abs(b.yPos - scrollY))[0].kI; 
@@ -79,7 +90,7 @@ export function SideNav(
         }
     }
 
-    return <Box className={styles._}> 
+    return <Box className={styles._} style={{visibility: isScrollable ? 'visible' : 'hidden'}}> 
         {
             ticks.map((tick, tickI) => {
                 let targetStyle:React.CSSProperties = {}; 
@@ -92,13 +103,13 @@ export function SideNav(
                 else if (tickI < closestI) targetStyle.color = 'goldenrod'
                 
                 if(tick.type == 'main') return (
-                    <HashLink key={tickI} to={tick.href} smooth className={styles.tick._} style={targetStyle}>
+                    <HashLink key={tick.yPos} to={tick.href} smooth className={styles.tick._} style={targetStyle}>
                         <Typography className={styles.tick.label}>{tick.label}</Typography>
                         <Box className={styles.tick.tick} />
                     </HashLink>
                 )
                 else if (tick.type == 'sub') return (
-                    <Box onClick={() => handleSubClick(tick.yPos)} key={tickI} className={styles.subtick._}>
+                    <Box onClick={() => handleSubClick(tick.yPos)} key={tick.yPos} className={styles.subtick._ + ` k-${tickI}-${tick.yPos}`}>
                         <Box className={styles.subtick.tick} style={targetStyle}/>
                     </Box>
                 )
@@ -106,7 +117,7 @@ export function SideNav(
         }
         <Box className={styles.footer} key={scrollY}>
             <Typography>[</Typography>
-            <Typography>{`${Math.round(Math.min(scrollY / maxScrollY, 1) * 10000) / 100}%`}</Typography>
+            <Typography>{`${((scrollY / maxScrollY) * 100).toFixed(2).toString().padStart(6, "0")}%`}</Typography>
             <Typography>//</Typography>
             <Typography>{`${10}m`}</Typography>
             <Typography>]</Typography>
@@ -123,11 +134,11 @@ const styles = {
     tick: {
         _: `flex items-center gap-md group `,
         label: `font-subtext invisible opacity-0 group-hover:visible group-hover:opacity-100 transition`, 
-        tick: `h-px border-b border-b-4 w-1/4 ml-auto group-hover:w-full max-w-1/2 group-hover:border-b-5 rounded-full `,  
+        tick: `h-px border-b border-b-4 w-1/4 ml-auto group-hover:w-full max-w-1/2 group-hover:border-b-5 rounded-full transition `,  
     }, 
     subtick: {
-        _: `cursor-pointer group h-3 w-1/8 hover:w-3/16 ml-auto flex`,
-        tick: `h-px border-b border-b-3 w-full transition group-hover:border-b-4 my-auto rounded-full`,  
+        _: `cursor-pointer group h-3 w-1/8 hover:w-3/16 ml-auto flex transition`,
+        tick: `h-px border-b border-b-3 w-full transition group-hover:border-b-4 my-auto rounded-full transition`,  
     },
     footer: `font-subtext tracking-widest text-center flex justify-between `, 
 }

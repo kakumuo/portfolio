@@ -1,17 +1,18 @@
 import * as React from 'react'
 import { Box, Divider, Skeleton, Typography } from "@mantine/core";
-import { Link, useLoaderData } from "react-router";
+import { data, Link, useLoaderData, useLocation, useNavigate, useParams } from "react-router";
 import { MainPage } from "../components/MainPage";
-import { LinkButtonGroup, StatusGrid, TechMakeupBar } from "../components/ProjectPreview";
-import { formatDate, threeDigitCode } from '../components/Utils';
-import { type GitRevision, type ProjectHeader, type BlogHeader, type PostPageData, type Preload } from '../components/types';
-import type { PortfolioClient } from '../components/PortfolioClient';
+import { StatusGridCaption, TechMakeupBar } from "../components/ProjectPreview";
+import { formatDate, resolvePreload, threeDigitCode } from '../components/Utils';
+import { type GitRevision, type ProjectHeader, type BlogHeader, type PostPageData, type Preload, type PostPageResponseData, type PostData } from '../components/types';
+import { PortfolioClient } from '../components/PortfolioClient';
 import { StyledMarkdown } from '../components/MarkdownStyle';
 import { SideNav, type SideNavElement } from '../components/SideNav';
 import { Button } from '../components/Components';
+import { LoadingPage } from './LoadingPage';
 
 
-export function loadPostPage(client:PortfolioClient, data:Preload<PostPageData>, isProject:boolean, id:string) {
+export function loadPostPage(client:PortfolioClient, data:Preload<PostPageResponseData>, isProject:boolean, id:string) {
     data.isProject = new Promise((resolve, _) => resolve(isProject)); 
     data.headerData = isProject ? client.getProjectHeader({ids:[id]}) : client.getBlogHeader({ids:[id]}); 
     data.postData = client.getPostData({id: id})
@@ -24,40 +25,80 @@ export function loadPostPage(client:PortfolioClient, data:Preload<PostPageData>,
 
 export function PostPage() {
     const [pageData, setPageData] = React.useState(null! as PostPageData); 
-    const preloadData = useLoaderData<typeof loadPostPage>(); 
     const [sideNavElements, setSideNavElements] = React.useState<SideNavElement[]>([])
+    const [loaded, setLoaded] = React.useState(false); 
     const [scrollY, setScrollY] = React.useState(0); 
-    const bodyRef = React.useRef<HTMLDivElement>(null!); 
     const mainRef = React.useRef<HTMLDivElement>(null!); 
+    const [client, _] = React.useState(new PortfolioClient()); 
+    const {id} = useParams()
+    const location = useLocation();
+
+    
+    const navigate = useNavigate()
 
     React.useEffect(() => {
         ;(async() => {
-            const [post, header, changelog, projchangelog] = await Promise.all([
-                (await fetch("/samplePost/post.md")).text(), 
-                (await fetch("/samplePost/projheader.json")).json(), 
-                (await fetch("/samplePost/changelog.json")).json(), 
-                (await fetch("/samplePost/changelog.json")).json()
-            ]); 
+            // const [post, header, changelog, projchangelog] = await Promise.all([
+            //     (await fetch("/samplePost/post.md")).text(), 
+            //     (await fetch("/samplePost/projheader.json")).json(), 
+            //     (await fetch("/samplePost/changelog.json")).json(), 
+            //     (await fetch("/samplePost/changelog.json")).json()
+            // ]); 
 
-            // console.log(post, header, changelog); 
+            // // console.log(post, header, changelog); 
+
+            // setPageData({
+            //     isProject: true, 
+            //     headerData: [header], 
+            //     postChangelog: changelog, 
+            //     projChangelog: projchangelog,
+            //     postData: {
+            //         postContent: post
+            //     }
+            // } as PostPageData)
+
+            const isProject = location.pathname.match(/\/projects\//) != null
+
+            console.log(isProject)
+
+            const [post, header, changelog, projChangelog] = await Promise.all([
+                client.getPostData({id: id!}), 
+                isProject ? client.getProjectHeader({ids: [id!]}) : client.getBlogHeader({ids: [id!]}), 
+                client.getPostChangelog({id: id!}),
+                client.getProjectChangelog({linkOrId: id!})
+            ]);
+
+            if(!post.success || !header.success || !changelog.success || (projChangelog && !projChangelog.success)) {
+                const tmp = [header, changelog, post]
+                if(projChangelog) tmp.push(projChangelog); 
+                const target = tmp.find(d => d.success == false)
+                navigate('/error', {
+                    replace: true, 
+                    state: target
+                })
+                return;
+            }
 
             setPageData({
-                isProject: true, 
-                headerData: [header], 
-                postChangelog: changelog, 
-                projChangelog: projchangelog,
-                postData: {
-                    postContent: post
-                }
-            } as PostPageData)
+                isProject: isProject, 
+                headerData: (header as any).data, 
+                postChangelog: (changelog as any).data, 
+                postData: (post as any).data, 
+                projChangelog: (projChangelog as any).data
+            })
+            setLoaded(true); 
         })();
-    }, [preloadData]); 
+
+        return () => {
+            setLoaded(false); 
+        }
+    }, [location.pathname]); 
 
 
     // run when data is loaded
         React.useEffect(() => {
 
-        if(!bodyRef.current || !bodyRef.current.children) return; 
+        if(!mainRef.current) return; 
         const tmp:SideNavElement[]= [{
             href: '#title', 
             label: '[Top]', 
@@ -65,26 +106,25 @@ export function PostPage() {
         }]; 
         const targetAnchors = ['h1', 'h2', 'h3', 'h4', 'h5']
 
-        for(let child of bodyRef.current.children) {
-            if(targetAnchors.includes(child.tagName.toLowerCase())) {
+        for (const child of mainRef.current!.children) {
+            if (targetAnchors.includes(child.tagName.toLowerCase())) {
+
                 tmp.push({
                     label: child.textContent,
-                    href: "#" + child.id, 
-                    yPos: (child as HTMLDivElement).offsetTop -  (child as HTMLDivElement).scrollHeight
-                })
+                    href: "#" + child.id,
+                    yPos: (child as HTMLElement).offsetTop - (child as HTMLElement).offsetHeight
+                });
             }
         }
 
-        console.log(tmp)
-
         setSideNavElements(tmp); 
-    }, [pageData, bodyRef.current])
+    }, [pageData, mainRef.current])
 
     React.useEffect(() => {
         let scrollHandler:()=>void; 
         if(mainRef.current){
             scrollHandler = () => {
-                setScrollY(mainRef.current.scrollTop)
+                setScrollY(mainRef.current.scrollTop + mainRef.current.clientTop)
             }
             mainRef.current.addEventListener('scroll', scrollHandler); 
         } 
@@ -93,20 +133,22 @@ export function PostPage() {
         }
     }, [mainRef.current]);
 
-    return <MainPage 
+    return <>{!loaded ? <LoadingPage /> : <MainPage 
         ref={mainRef}
         className={styles._} >
         {!pageData || !pageData.headerData || !pageData.postData ? 
             <Skeleton variant='text' /> 
             :<>
-                <SideNav rootElements={sideNavElements} scrollY={scrollY} maxScrollY={bodyRef.current?.scrollHeight} parentRef={mainRef}/>
+                <SideNav rootElements={sideNavElements} scrollY={scrollY} parentRef={mainRef}/>
                 {pageData.isProject ? <ProjectBanner data={pageData.headerData[0] as ProjectHeader} />: <BlogBanner data={pageData.headerData[0] as BlogHeader} />}
-                <StyledMarkdown className='mb-[40vh]' ref={bodyRef}>{pageData.postData.postContent}</StyledMarkdown>
+                <Divider className='mb-[5vh] invisible' />
+                <StyledMarkdown className='mb-[40vh]'>{pageData.postData.postContent}</StyledMarkdown>
+                <Divider className='mt-[5vh] mb-auto invisible' />
                 {pageData.isProject && <ChangeLog title='Project ChangeLog' revisions={pageData.projChangelog} />}
                 <ChangeLog title='Post ChangeLog' revisions={pageData.postChangelog} />
             </>
         }
-    </MainPage>
+    </MainPage>}</>
 }
 
 
@@ -119,7 +161,7 @@ function ProjectBanner(props:{data:ProjectHeader}) {
 
     return <Box className={styles._}>
         <Box className={styles.header}>
-            <StatusGrid className='text-[.8em]' id='title' data={props.data} />
+            <StatusGridCaption className='text-[.8em]' id='title' data={props.data} />
             <Typography className='font-title'>{props.data.title}</Typography>
             <Typography className='font-subheader justify-self-end self-end'>{formatDate(props.data.startDate)}</Typography>
         </Box>
@@ -141,7 +183,7 @@ function BlogBanner(props:{data:BlogHeader}){
 
     return <Box className={styles._}>
         <Box className={styles.header}>
-            <Typography>BLOG-{threeDigitCode(props.data.id)}</Typography>
+            <Typography>//BLOG-{threeDigitCode(props.data.id)}</Typography>
             <Divider />
             <Typography>READ TIME // 8 MINS</Typography>
         </Box>
@@ -196,7 +238,7 @@ function RevisionItem(props: { revision: GitRevision }) {
 }
 
 const styles = {
-    _: `gap-lg mb-12 overflow-y-scroll px-4`, 
+    _: `gap-sm mb-12 overflow-y-scroll px-4 flex flex-col`, 
     header: {
         container: `grid mt-12`, 
         head: `grid grid-cols-[auto_1fr_auto] grid-rows-1`, 

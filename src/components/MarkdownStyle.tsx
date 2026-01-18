@@ -3,13 +3,10 @@ import { Caption } from "./Caption";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Box, Typography } from "@mantine/core";
-import { forwardRef } from "react";
 
-export const StyledMarkdown = forwardRef((props:{className?:string, children:string|undefined|null}, ref) => {
-    return <Box ref={ref as any}  className={`flex flex-col gap-sm font-body ${props.className ?? ""}`}>
-        <Markdown remarkPlugins={[remarkGfm]} components={MarkdownStyle}  children={props.children}/>
-    </Box>
-})
+export const StyledMarkdown = (props:{className?:string, children:string|undefined|null}) => {
+    return <Markdown remarkPlugins={[remarkGfm]} components={MarkdownStyle}  children={props.children}/>
+}
 
 export const MarkdownStyle:Components = {
     p(props) {
@@ -117,7 +114,7 @@ export const MarkdownStyle:Components = {
     img: ({node, children, title, alt, ...props}) => {
         return <Box className="max-w-1/2 mx-auto items-center flex flex-col">
             <Typography className="font-subtext text-[.9em]">{title}</Typography>
-            <img {...props} title={title} alt={alt} className="max-h-60" />
+            <img {...props} title={title} alt={alt} className="max-h-[50vh]" />
             <Typography className="font-subtext text-[.7em]">{alt}</Typography>
         </Box>
     }, 
@@ -135,7 +132,7 @@ export const MarkdownStyle:Components = {
     <h4 className="font-header pt-4" id={children?.toString().toLowerCase().replace(" ", '-')} {...props}>[{children}]</h4>
     ),
     a: ({node, ...props}) => (
-        <a className="font-label underline" {...props} />
+        <a className="font-body underline" {...props} />
     ),
     li: ({node, ...props}) => (
         <li className="font-subtext" {...props} />
@@ -193,7 +190,7 @@ export const MarkdownStyle:Components = {
 
     }
     const styles = {
-        caption: `inline-block font-bold font-body`, 
+        caption: `inline-block font-body`, 
         p: `font-body`, 
     }
 

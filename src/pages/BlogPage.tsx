@@ -1,13 +1,13 @@
 import React from "react"
 
-import { Box, Divider, Typography } from "@mantine/core"
-import { BlogPostPreview } from "../components/BlogPostPreview"
+import { Box } from "@mantine/core"
 import { SearchBar, type SortOption } from "../components/Components"
 import { AppContext } from "../app"
 import type { BlogHeader } from "../components/types"
 import { BlogPreview } from "./HomePage"
 import { SectionHeader } from "../components/SectionHeader"
-import { Caption } from "../components/Caption"
+import { LoadingPage } from "./LoadingPage"
+import { useNavigate } from "react-router"
 
 
 const sampleBlogPosts:BlogHeader[] = [
@@ -65,13 +65,25 @@ export function BlogPage() {
     const {client} = React.useContext(AppContext)
     const [blogData, setBlogData] = React.useState([] as BlogHeader[])
     const [filters, setFilters] = React.useState([] as string[])
+    const [loaded, setLoaded] = React.useState(false); 
     const [sort, setSort] = React.useState([] as SortOption[]); 
+    const navigate = useNavigate(); 
 
     React.useEffect(() => {
         (async() => {
             const resp = await client.getBlogHeader({});
-            // setBlogData(resp); 
-            setBlogData(sampleBlogPosts) 
+
+            if(!resp.success) {
+                navigate('/error', {
+                    replace: true, 
+                    state: resp
+                }); 
+                return; 
+            }
+
+            setBlogData(resp.data); 
+            setLoaded(true); 
+            // setBlogData(sampleBlogPosts) 
         })(); 
     }, [])
 
@@ -107,13 +119,14 @@ export function BlogPage() {
     }, [filters, blogData, sort])
 
 
-    return <Box className={styles.container}>
+    return <>{!loaded ? <LoadingPage /> :  <Box className={styles.container}>
         <SectionHeader  title="Blog"/>
         <SearchBar sortOptions={Object.values(SortOptionType)} setSort={setSort} setFilters={setFilters} />
         <Box className={styles.body._}>
             {filterData.map((b,bI) => <BlogPreview showSummary blog={b} key={bI} />)}
         </Box>
-    </Box>
+    </Box>}</>
+   
 }
 
 const styles = {

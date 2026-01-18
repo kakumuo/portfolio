@@ -5,10 +5,10 @@ import { IconArrowDown, IconArrowUp } from "./Icons";
 export function Corners(props:{className:string, corner:'bl'|'br'|'tl'|'tr'}) {
     return <svg className={props.className} viewBox="0 0 100 100" width="50px">
         {
-            props.corner == 'bl' ? <path d="M25,98 L2,98 L2,75" fill="none" stroke="black" strokeWidth={3} />
-            : props.corner == 'br' ? <path d="M75,98 L98,98 L98,75" fill="none" stroke="black" strokeWidth={3} />
-            : props.corner == 'tl' ? <path d="M25,2 L2,2 L2,25" fill="none" stroke="black" strokeWidth={3} />
-            : <path d="M75,2 L98,2 L98,25" fill="none" stroke="black" strokeWidth={3} />
+            props.corner == 'bl' ? <path d="M25,98 L2,98 L2,75" fill="none" stroke="inherit" strokeWidth={3} />
+            : props.corner == 'br' ? <path d="M75,98 L98,98 L98,75" fill="none" stroke="inherit" strokeWidth={3} />
+            : props.corner == 'tl' ? <path d="M25,2 L2,2 L2,25" fill="none" stroke="inherit" strokeWidth={3} />
+            : <path d="M75,2 L98,2 L98,25" fill="none" stroke="inherit" strokeWidth={3} />
         }
     </svg>
 }
@@ -163,4 +163,3 @@ export function SortDropdown(props:{options:string[], setSort?:(options:SortOpti
     </Box>
   </Box>
 }
-

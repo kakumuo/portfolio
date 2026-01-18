@@ -37,6 +37,7 @@ export async function resolvePreload<T>(preload: Preload<T>): Promise<T> {
   const entries = await Promise.all(
     Object.entries(preload).map(async ([key, value]) => {
       const resolved = await value;
+      console.log(key, resolved)
       return [key, resolved] as const;
     })
   );

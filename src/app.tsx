@@ -5,21 +5,18 @@ import { HomePage } from './pages/HomePage';
 import { createBrowserRouter, RouterProvider, } from 'react-router';
 
 import { ProjectsPage } from './pages/ProjectsPage';
-import { loadPostPage, PostPage } from './pages/PostPage';
+import { PostPage } from './pages/PostPage';
 import { BlogPage } from './pages/BlogPage';
 import { PortfolioClient } from './components/PortfolioClient';
 import { MainLayout } from './components/MainLayout';
-import type { PostPageData, Preload } from './components/types';
-import { NotFoundPage } from './pages/NotFoundPage';
+import { ErrorPage } from './pages/ErrorPage';
 
 
 
 export type PreloadMap = {[key:string]:{data:any, retriveTime:number}}
 
 type AppContextData = {
-    client:PortfolioClient,
-    preload:PreloadMap, 
-    setPreload:React.Dispatch<PreloadMap>
+    client:PortfolioClient
 }
 
 export const AppContext = React.createContext(null! as AppContextData); 
@@ -27,28 +24,6 @@ export const AppContext = React.createContext(null! as AppContextData);
 //TODO: fix tailwind theme config
 export function App() {
     const [client, _] = React.useState(new PortfolioClient()); 
-    const [preload, setPreload] = React.useState({} as PreloadMap)
-
-    const handlePreload = (path:string, callback:(...data:any[])=>any) => {
-        // console.log(preload[path])
-        if (!preload[path]) {
-            // console.log("setting preload on: ", path)
-            const entry = {
-                data: callback(), 
-                retriveTime: Date.now()
-            } as PreloadMap[any]; 
-
-            setPreload(prev => ({
-                ...prev, 
-                [path]: entry
-            })); 
-
-            return entry.data; 
-        } else {
-            // console.log("getting preload on: ", path)
-            return preload[path].data; 
-        }
-    }
 
     const router = React.useMemo(() => 
         createBrowserRouter([
@@ -56,20 +31,15 @@ export function App() {
                 {path: "/", Component: HomePage},
                 {path: '/projects' , Component: ProjectsPage},
                 {path: '/blog' , Component: BlogPage},
-                {path: '/projects/:id' , Component: PostPage, 
-                    loader: ({params}) => 
-                        handlePreload(params.id as string, loadPostPage.bind(loadPostPage, client, {} as Preload<PostPageData>, true, params.id as string))
-                },
-                {path: '/blog/:id'  , Component: PostPage, 
-                    loader: ({params}) => 
-                        handlePreload(params.id as string, loadPostPage.bind(loadPostPage, client, {} as Preload<PostPageData>, false, params.id as string))
-                },
-                {path: '/*', Component: NotFoundPage}
+                {path: '/projects/:id' , Component: PostPage},
+                {path: '/blog/:id'  , Component: PostPage},
+                {path: '/error', Component: ErrorPage},
+                {path: '/*', Component: ErrorPage},
             ]}
         ])
-    , [preload]); 
+    , []); 
 
-    return <AppContext value={{client, preload, setPreload}}>
+    return <AppContext value={{client}}>
         <Box className={styles.container}
             style={{
                 scrollbarWidth: 'thin', 

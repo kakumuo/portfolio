@@ -33,18 +33,18 @@ export function IconGoodReads(props:IconProps) {
 
 
 export function IconArrowUp(props:IconProps) {
-    return <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3C12.2652 3 12.5196 3.10536 12.7071 3.29289L19.7071 10.2929C20.0976 10.6834 20.0976 11.3166 19.7071 11.7071C19.3166 12.0976 18.6834 12.0976 18.2929 11.7071L13 6.41421V20C13 20.5523 12.5523 21 12 21C11.4477 21 11 20.5523 11 20V6.41421L5.70711 11.7071C5.31658 12.0976 4.68342 12.0976 4.29289 11.7071C3.90237 11.3166 3.90237 10.6834 4.29289 10.2929L11.2929 3.29289C11.4804 3.10536 11.7348 3 12 3Z" fill="#000000"></path> </g></svg>
+    return <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3C12.2652 3 12.5196 3.10536 12.7071 3.29289L19.7071 10.2929C20.0976 10.6834 20.0976 11.3166 19.7071 11.7071C19.3166 12.0976 18.6834 12.0976 18.2929 11.7071L13 6.41421V20C13 20.5523 12.5523 21 12 21C11.4477 21 11 20.5523 11 20V6.41421L5.70711 11.7071C5.31658 12.0976 4.68342 12.0976 4.29289 11.7071C3.90237 11.3166 3.90237 10.6834 4.29289 10.2929L11.2929 3.29289C11.4804 3.10536 11.7348 3 12 3Z" fill="#000000"></path> </g></svg>
 }   
 
 
 export function IconArrowDown(props:IconProps) {
-    return <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3C12.5523 3 13 3.44772 13 4V17.5858L18.2929 12.2929C18.6834 11.9024 19.3166 11.9024 19.7071 12.2929C20.0976 12.6834 20.0976 13.3166 19.7071 13.7071L12.7071 20.7071C12.3166 21.0976 11.6834 21.0976 11.2929 20.7071L4.29289 13.7071C3.90237 13.3166 3.90237 12.6834 4.29289 12.2929C4.68342 11.9024 5.31658 11.9024 5.70711 12.2929L11 17.5858V4C11 3.44772 11.4477 3 12 3Z" fill="#000000"></path> </g></svg>
+    return <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3C12.5523 3 13 3.44772 13 4V17.5858L18.2929 12.2929C18.6834 11.9024 19.3166 11.9024 19.7071 12.2929C20.0976 12.6834 20.0976 13.3166 19.7071 13.7071L12.7071 20.7071C12.3166 21.0976 11.6834 21.0976 11.2929 20.7071L4.29289 13.7071C3.90237 13.3166 3.90237 12.6834 4.29289 12.2929C4.68342 11.9024 5.31658 11.9024 5.70711 12.2929L11 17.5858V4C11 3.44772 11.4477 3 12 3Z" fill="#000000"></path> </g></svg>
 }   
 
 export function IconMAL(props:IconProps) {
     
     return <svg className={props.className} xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 192 192">
-    <rect fill={props.primary ?? "black"} x="0" width="192" height="192" rx="28" ry="28"/>
+    <rect x="0" width="192" height="192" rx="28" ry="28"/>
     <g fill={props.accent ?? "white"}>
         <polygon  points="9.8 124.96 9.8 57.81 25.93 57.81 40.27 78.35 54.7 57.81 70.92 57.81 70.92 124.96 54.62 124.96 54.62 84.3 40.36 102.8 26.18 84.21 26.18 124.96 9.8 124.96"/>
         <path  d="M132,57.48h-14.13c-5.73,0-25.68,0-34.51,22.03-4.62,11.53-6.88,33.57,6.11,55.01l13.5-9.85s-5.35-7.64-7.55-22.24h20.2l.17,22.24h18.16v-50.76h-18v14.26l-17.15-.17s2.89-16.81,20.08-16.3h17.1l-3.99-14.22h0Z"/>
@@ -53,5 +53,13 @@ export function IconMAL(props:IconProps) {
     </svg>
 }
 
+
+export function IconLoad(props:IconProps) {
+    return <svg className={props.className} fill="inherit" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M18.91.28a1,1,0,0,0-.82.21,1,1,0,0,0-.36.77V5.45a1,1,0,0,0,.75,1,9.91,9.91,0,1,1-5,0,1,1,0,0,0,.75-1V1.26a1,1,0,0,0-.36-.77,1,1,0,0,0-.82-.21,16,16,0,1,0,5.82,0ZM16,30A14,14,0,0,1,12.27,2.51V4.7a11.91,11.91,0,1,0,7.46,0V2.51A14,14,0,0,1,16,30Z"></path> </g></svg>
+}
+
+export function IconPalette(props:IconProps) {
+    return <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="inherit"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <defs> <style>{`.cls-1{stroke:#020202;stroke-miterlimit:10;stroke-width:1.92px;}`}</style> </defs> <g id="roll_brush" data-name="roll brush"> <circle className="cls-1" cx="5.73" cy="13.45" r="0.48"></circle> <circle className="cls-1" cx="7.65" cy="18.24" r="0.48"></circle> <circle className="cls-1" cx="6.69" cy="8.65" r="0.48"></circle> <circle className="cls-1" cx="10.52" cy="5.78" r="0.48"></circle> <circle className="cls-1" cx="15.32" cy="6.74" r="0.48"></circle> <circle className="cls-1" cx="18.2" cy="10.57" r="0.48"></circle> <path className="cls-1" d="M22.51,11.86a4.87,4.87,0,0,1-4.86,4.95H16.18a4.28,4.28,0,0,0-3.57,1.91l-1.15,1.72a4.74,4.74,0,0,1-4,2.12h0a4.61,4.61,0,0,1-3.87-2A13.07,13.07,0,0,1,1.41,13.3V12a10.55,10.55,0,0,1,21.1-.15Z"></path> </g> </g></svg>
+}
 
 
