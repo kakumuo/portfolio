@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @utility card {
-  @apply shadow-[3px_3px_0px_rgba(0,0,0,0.03)] ; 
+  @apply shadow-[3px_3px_0px_var(--neutral-accent)] ; 
 }
 
 @utility font-title {
@@ -120,10 +120,11 @@ anims
   }
 }
 
+
 @layer base {
     :root, .vaporwave-light {
         --neutral: #f6fdff;
-        --neutral-accent: #d3d3d3;
+        --neutral-accent: #dfdddd;
         --neutral-contrast: #202020;
         --primary: #ff60ea;
         --secondary: #e4a3d5;
@@ -131,8 +132,8 @@ anims
     }
 
     .vaporwave-dark {
-        --neutral: #1f1f1f;
-        --neutral-accent: #3a3a3a;
+        --neutral: #1f1e1e;
+        --neutral-accent: #474747;
         --neutral-contrast: #f7f7f7;
         --primary: #f709b7;
         --secondary: #f066cb;
@@ -140,8 +141,8 @@ anims
     }
 
     .ocean-light {
-        --neutral: #f3fbfd;
-        --neutral-accent: #d4bea2;
+        --neutral: #f8f5f1;
+        --neutral-accent: #ebe6d1;
         --neutral-contrast: #1f2d30;
         --primary: #4ac9f0;
         --secondary: #95c6cf;
@@ -149,12 +150,120 @@ anims
     }
 
     .ocean-dark {
-        --neutral: #122326;
-        --neutral-accent: #1d383c;
+        --neutral: #113558;
+        --neutral-accent: #1a6481;
         --neutral-contrast: #f4f9fa;
-        --primary: #2eb8c5;
-        --secondary: #49d6df;
-        --tertiary: #94f6f3;
+        --primary: #856c47;
+        --secondary: #a39c74;
+        --tertiary: #19d7dd;
     }
 
+    .bchiang-dark {
+        --neutral: #0F172A;
+        --neutral-accent: #232B3E;
+        --neutral-contrast: #FFFFFF;
+        --primary: #23d1ba;
+        --secondary: #4bc0b2;
+        --tertiary: #c9f5f1;
+    }
+
+    .bchiang-light {
+        --neutral: #e8faf7;
+        --neutral-accent: #a8fcff;
+        --neutral-contrast: #232B3E;
+        --primary: #53b39b;
+        --secondary: #aef3e9;
+        --tertiary: #0a266b;
+    }
+
+
+    .terminal-dark {
+        --neutral: #161616;
+        --neutral-accent: #3f3f3f;
+        --neutral-contrast: #09ff00;
+        --primary: #007209;
+        --secondary: #014917;
+        --tertiary: #bbffc4;
+    }
+
+    .terminal-light {
+        --neutral: #ffffff;
+        --neutral-accent: #e2e2e2;
+        --neutral-contrast: #011b09;
+        --primary: #62e92d;
+        --secondary: #697c6b;
+        --tertiary: #11bb02;
+    }
+
+    .terminal-dark {
+        --neutral: #161616;
+        --neutral-accent: #1dff09;
+        --neutral-contrast: #00ff00;
+        --primary: #094e00;
+        --secondary: #183d23;
+        --tertiary: #e2e2e2;
+    }
+
+    .terminal-light {
+        --neutral: #ffffff;
+        --neutral-accent: #e2e2e2;
+        --neutral-contrast: #011b09;
+        --primary: #62e92d;
+        --secondary: #697c6b;
+        --tertiary: #11bb02;
+    }
+
+    .forrest-dark {
+        --neutral: #202D14;
+        --neutral-accent: #2B5E26;
+        --neutral-contrast: #d2e273;
+        --primary: #975e0f;
+        --secondary: #b19732;
+        --tertiary: #ddb40d;
+    }
+
+    .forrest-light {
+        --neutral: #c3f8aa;
+        --neutral-accent: #9eee70;
+        --neutral-contrast: #1a1707;
+        --primary: #918f33;
+        --secondary: #125819;
+        --tertiary: #324611;
+    }
+
+    .vboy-dark {
+        --neutral: #121213;
+        --neutral-accent: #7a0707;
+        --neutral-contrast: #fa3a2d;
+        --primary: #940014;
+        --secondary: #9c3831;
+        --tertiary: #fa2922;
+    }
+
+    .vboy-light {
+        --neutral: #fcd1d5;
+        --neutral-accent: rgb(247, 197, 191);
+        --neutral-contrast: #252525;
+        --primary: #f7533d;
+        --secondary: #7a0202;
+        --tertiary: #ff3116;
+    }
+    
+    .normal-dark {
+        --neutral: #242424;
+        --neutral-accent: #525252;
+        --neutral-contrast: #ffffff;
+        --primary: #505050;
+        --secondary: #cfcfcf;
+        --tertiary: #ffffff;
+    }
+
+    .normal-light {
+        --neutral: #ffffff;
+        --neutral-accent: rgb(192, 192, 192);
+        --neutral-contrast: #242424;
+        --primary: #b4b4b4;
+        --secondary: #6b6b6b;
+        --tertiary: #424242;
+    }
 }

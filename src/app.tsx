@@ -26,7 +26,7 @@ export const AppContext = React.createContext(null! as AppContextData);
 //TODO: fix tailwind theme config
 export function App() {
     const [client, _] = React.useState(new PortfolioClient()); 
-    const [theme, setTheme] = React.useState<AppTheme>({themeClass: 'vaporwave', isDark: false})
+    const [theme, setTheme] = React.useState<AppTheme>({themeClass: 'normal', isDark: true})
 
     const router = React.useMemo(() => 
         createBrowserRouter([
@@ -59,8 +59,12 @@ const styles = {
     container: `
             h-screen  w-screen px-[min(30vw,15%)] overflow-hidden
             grid grid-cols-1 grid-rows-[auto_1fr]
-            dark gap-8xl bg-(--neutral) text-(--neutral-contrast)
+            dark gap-8xl text-(--neutral-contrast)
             -z-100
+            [background-image:linear-gradient(to_bottom,rgb(from_var(--neutral-accent)_r_g_b_/_0.2)_2px,transparent_2px),linear-gradient(to_right,rgb(from_var(--neutral-accent)_r_g_b_/_.2)_2px,transparent_2px),linear-gradient(to_right,var(--neutral))]
+            bg-repeat
+            bg-size-[15vw_15vw]
+            bg-center
         `,
 }
 

@@ -176,8 +176,8 @@ export function HomePage(){
             // const blogRes = sampleBlogPosts.sort((a, b) => b.createDate - a.createDate).filter((_, i) => i < 3); 
             setFeaturedBlogData(blogRes); 
 
-            // const projRes = sampleProjData.sort((a, b) => b.endDate - a.endDate).filter((_, i) => i < 3); 
-            const projRes = projData.data.sort((a, b) => b.endDate - a.endDate).filter((_, i) => i < 3); 
+            const projRes = sampleProjData.sort((a, b) => b.endDate - a.endDate).filter((_, i) => i < 3); 
+            // const projRes = projData.data.sort((a, b) => b.endDate - a.endDate).filter((_, i) => i < 3); 
             setFeaturedProjData(projRes); 
 
             setLoaded(true); 
@@ -224,6 +224,7 @@ function DisplayHeader(props:{label:string, to:string}){
 const SHOW_DUR_MS = 10 * 1000; 
 function ProjectDisplay({projects}:{projects:ProjectHeader[]}){
     const [projI, setProjI] = React.useState(0); 
+    const progressBarRef = React.createRef<HTMLDivElement>(); 
     const curProj = projects[projI]; 
     const [hover, setHover] = React.useState(false); 
     const hoverProps = {
@@ -237,13 +238,15 @@ function ProjectDisplay({projects}:{projects:ProjectHeader[]}){
         } else {
             setProjI(val => val == 0 ? projects.length - 1 : val - 1)
         }
+
+        progressBarRef.current && progressBarRef.current.getAnimations().forEach(anim => {anim.cancel(); anim.play();}); 
     }
 
     return <Box className={styles.projDisplay._}>
         <DisplayHeader label='Project // Featured' to='/projects' />
         <ProjectPreview className={styles.projDisplay.main._} {...hoverProps} key={projI} curProj={curProj} />
         
-        {projects.length > 1 && <ProgressBar pause={hover} className={styles.projDisplay.progress} durationMS={SHOW_DUR_MS} onAnimationIteration={() => nextProj(true)} />}
+        {projects.length > 1 && <ProgressBar ref={progressBarRef} pause={hover} className={styles.projDisplay.progress} durationMS={SHOW_DUR_MS} onAnimationIteration={() => nextProj(true)} />}
 
         <Box className={styles.projDisplay.footer._}>
             <Button disabled={projects.length <= 1} onClick={() => nextProj(false)} className={styles.projDisplay.footer.buttons}>{"prev"}</Button>

@@ -177,13 +177,12 @@ export function SortDropdown(props:{options:string[], setSort?:(options:SortOpti
 
 
 
-export const ProgressBar = ({durationMS, pause, ...props}:React.ComponentPropsWithoutRef<'div'> & {durationMS:number, pause?:boolean}) => {
-  const progressRef = React.useRef<HTMLSpanElement>(null!); 
+export const ProgressBar = ({durationMS, ref, pause, ...props}:React.ComponentPropsWithRef<'div'> & {durationMS:number, pause?:boolean}) => {
 
   return <Box {...props}>
       <span 
-        ref={progressRef}
-        className='h-full bg-black' 
+        ref={ref}
+        className='h-full bg-(--secondary)' 
         style={{
           // background: 'linear-gradient(to right, black 0%, transparent 0%)', 
           animationName: 'fillBar', 
@@ -203,10 +202,15 @@ type ThemeType = {
   themeClass:string, 
   fontFace: string, 
 }
-
+//Courier New
 const themes:ThemeType[] = [
+  {label: "Normal", themeClass: 'normal', fontFace: 'font-[Georgia]'},
   {label: "Vaporwave", themeClass: 'vaporwave', fontFace: 'font-[Inter]'},
-  {label: "Ocean", themeClass: 'ocean', fontFace: 'font-[Open_Sans] '},
+  {label: "Ocean", themeClass: 'ocean', fontFace: 'font-[Lucida_Handwriting]'},
+  {label: "B.Chiang", themeClass: 'bchiang', fontFace: 'font-[Segoe_UI]'},
+  {label: "Terminal", themeClass: 'terminal', fontFace: 'font-[Courier_New]'},
+  {label: "Forrest", themeClass: 'forrest', fontFace: 'font-[Papyrus]'},
+  {label: "V.Boy", themeClass: 'vboy', fontFace: 'font-[Verdana]'},
 ]
 export function ThemePicker({className, ...props}:React.ComponentPropsWithoutRef<'div'>){
   const ref = React.useRef<HTMLDivElement>(null!)
