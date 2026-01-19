@@ -39,54 +39,57 @@ export function PostPage() {
 
     React.useEffect(() => {
         ;(async() => {
-            const [post, header, changelog, projchangelog] = await Promise.all([
-                (await fetch("/samplePost/post.md")).text(), 
-                (await fetch("/samplePost/projheader.json")).json(), 
-                (await fetch("/samplePost/changelog.json")).json(), 
-                (await fetch("/samplePost/changelog.json")).json()
-            ]); 
+            // const [post, header, changelog, projchangelog] = await Promise.all([
+            //     (await fetch("/samplePost/post.md")).text(), 
+            //     (await fetch("/samplePost/header.json")).json(), 
+            //     (await fetch("/samplePost/changelog.json")).json(), 
+            //     (await fetch("/samplePost/changelog.json")).json()
+            // ]); 
 
-            // console.log(post, header, changelog); 
+            // // console.log(post, header, changelog); 
 
-            setPageData({
-                isProject: true, 
-                headerData: [header], 
-                postChangelog: changelog, 
-                projChangelog: projchangelog,
-                postData: {
-                    postContent: post
-                }
-            } as PostPageData)
+            // setPageData({
+            //     isProject: false, 
+            //     headerData: [header], 
+            //     postChangelog: changelog, 
+            //     projChangelog: projchangelog,
+            //     postData: {
+            //         postContent: post, 
+            //         attachments: [""]
+            //     }
+            // } as PostPageData)
 
-            // const isProject = location.pathname.match(/\/projects\//) != null
+
+
+            const isProject = location.pathname.match(/\/projects\//) != null
 
             // console.log(isProject)
 
-            // const [post, header, changelog, projChangelog] = await Promise.all([
-            //     client.getPostData({id: id!}), 
-            //     isProject ? client.getProjectHeader({ids: [id!]}) : client.getBlogHeader({ids: [id!]}), 
-            //     client.getPostChangelog({id: id!}),
-            //     client.getProjectChangelog({linkOrId: id!})
-            // ]);
+            const [post, header, changelog, projChangelog] = await Promise.all([
+                client.getPostData({id: id!}), 
+                isProject ? client.getProjectHeader({ids: [id!]}) : client.getBlogHeader({ids: [id!]}), 
+                client.getPostChangelog({id: id!}),
+                client.getProjectChangelog({linkOrId: id!})
+            ]);
 
-            // if(!post.success || !header.success || !changelog.success || (projChangelog && !projChangelog.success)) {
-            //     const tmp = [header, changelog, post]
-            //     if(projChangelog) tmp.push(projChangelog); 
-            //     const target = tmp.find(d => d.success == false)
-            //     navigate('/error', {
-            //         replace: true, 
-            //         state: target
-            //     })
-            //     return;
-            // }
+            if(!post.success || !header.success || !changelog.success || (projChangelog && !projChangelog.success)) {
+                const tmp = [header, changelog, post]
+                if(projChangelog) tmp.push(projChangelog); 
+                const target = tmp.find(d => d.success == false)
+                navigate('/error', {
+                    replace: true, 
+                    state: target
+                })
+                return;
+            }
 
-            // setPageData({
-            //     isProject: isProject, 
-            //     headerData: (header as any).data, 
-            //     postChangelog: (changelog as any).data, 
-            //     postData: (post as any).data, 
-            //     projChangelog: (projChangelog as any).data
-            // })
+            setPageData({
+                isProject: isProject, 
+                headerData: (header as any).data, 
+                postChangelog: (changelog as any).data, 
+                postData: (post as any).data, 
+                projChangelog: (projChangelog as any).data
+            })
             setLoaded(true); 
         })();
 
@@ -138,30 +141,48 @@ export function PostPage() {
         ref={mainRef}
         className={styles._} >
             <SideNav rootElements={sideNavElements} scrollY={scrollY} parentRef={mainRef}/>
-            {pageData.isProject ? <ProjectBanner data={pageData.headerData[0] as ProjectHeader} />: <BlogBanner data={pageData.headerData[0] as BlogHeader} />}
-            <Divider className='mb-[5vh] invisible' />
-            <StyledMarkdown className='mb-[40vh]'>{pageData.postData.postContent}</StyledMarkdown>
-            <Divider className='mt-[50vh] mb-auto invisible' />
+            {pageData.isProject ? 
+                <ProjectBanner data={pageData.headerData[0] as ProjectHeader} wordCount={pageData.postData.postContent.split(' ').length} />
+                : <BlogBanner data={pageData.headerData[0] as BlogHeader} wordCount={pageData.postData.postContent.split(' ').length} />
+            }
+            <Divider color="var(--tertiary)" className='mb-[5vh] invisible' />
+            <StyledMarkdown className='mb-[20vh]'>{pageData.postData.postContent}</StyledMarkdown>
+            <Divider color="var(--tertiary)" className='mt-[25vh] mb-auto invisible' />
             {pageData.isProject && <ChangeLog title='Project ChangeLog' revisions={pageData.projChangelog} />}
             <ChangeLog title='Post ChangeLog' revisions={pageData.postChangelog} />
     </MainPage>}</>
 }
 
 
-function ProjectBanner(props:{data:ProjectHeader}) {
+function ProjectBanner(props:{data:ProjectHeader, wordCount?:number}) {
     const styles = {
         _: `flex flex-col gap-sm`, 
+        headlabel: `font-subheader grid grid-cols-[auto_1fr_auto] items-center gap-md`, 
         header: `grid grid-cols-[auto_1fr_auto] items-end gap-md`, 
         footer: `grid grid-rows-[auto_1fr]`, 
     }
 
+    const readTime = React.useMemo(() => {
+        if(props.wordCount == undefined) return null; 
+
+        const tmpVal = props.wordCount / AVG_WPM; 
+        const val = (props.wordCount / AVG_WPM).toFixed(2).padStart(6, "0")
+        
+        return `${val} MIN${tmpVal <= 1 ? '' : 'S'}`
+    }, [props.wordCount])
+
     return <Box className={styles._}>
+        <Box className={styles.headlabel}>
+            <Typography id='title'>//PROJ-{threeDigitCode(props.data.id)}</Typography>
+            <Divider color="var(--tertiary)"/>
+            {readTime && <Typography>READ TIME // {readTime}</Typography>}
+        </Box>
         <Box className={styles.header}>
-            <StatusGridCaption className='text-[.8em]' id='title' data={props.data} />
+            <StatusGridCaption className='text-[.8em]'  data={props.data} />
             <Typography className='font-title'>{props.data.title}</Typography>
             <Typography className='font-subheader justify-self-end self-end'>{formatDate(props.data.startDate)}</Typography>
         </Box>
-        <Divider />
+        <Divider color="var(--tertiary)"/>
         <Box className={styles.footer}>
             <Typography className='font-subheader italic text-right'>{props.data.summary}</Typography>
             <TechMakeupBar makeup={props.data.makeupLayers} />
@@ -169,24 +190,34 @@ function ProjectBanner(props:{data:ProjectHeader}) {
     </Box>
 }
 
-function BlogBanner(props:{data:BlogHeader}){
+const AVG_WPM = 200; 
+function BlogBanner(props:{data:BlogHeader, wordCount?:number}){
     const styles = {
-        _: `grid grid-rows-[auto_1fr_auto] gap-sm`, 
+        _: `grid  grid-rows-[auto_1fr_auto] gap-sm `, 
         header: `font-subheader grid grid-cols-[auto_1fr_auto] grid-rows-1 items-center gap-sm`, 
-        main: `relative border overflow-hidden grid grid-rows-2 p-md`, 
+        main: `relative  overflow-hidden grid grid-rows-2 p-md bg-(--neutral) border border-(--tertiary)`, 
         footer: `font-subheader italic text-right`, 
     }
+
+    const readTime = React.useMemo(() => {
+        if(props.wordCount == undefined) return null; 
+
+        const tmpVal = props.wordCount / AVG_WPM; 
+        const val = (props.wordCount / AVG_WPM).toFixed(2).padStart(6, "0")
+        
+        return `${val} MIN${tmpVal <= 1 ? '' : 'S'}`
+    }, [props.wordCount])
 
     return <Box className={styles._}>
         <Box className={styles.header}>
             <Typography>//BLOG-{threeDigitCode(props.data.id)}</Typography>
-            <Divider />
-            <Typography>READ TIME // 8 MINS</Typography>
+            <Divider color="var(--tertiary)"/>
+            {readTime && <Typography>READ TIME // {readTime}</Typography>}
         </Box>
         <Box className={styles.main}>
-            <Typography className='font-title' id='title'>{props.data.title}</Typography>
-            <Typography className='font-subheader justify-self-end self-end'>{formatDate(props.data.createDate)}</Typography>
-            <img className='absolute left-1/2 top-1/2 -translate-1/2 -z-2 w-full h-auto objectfit-contain opacity-20' src={props.data.bannerImage} />
+            <Typography className='font-title z-1' id='title'>{props.data.title}</Typography>
+            <Typography className='font-subheader justify-self-end self-end z-1'>{formatDate(props.data.createDate)}</Typography>
+            <img className='absolute left-1/2 top-1/2 bg-none -translate-1/2 w-full h-auto objectfit-contain opacity-70' src={props.data.bannerImage} />
         </Box>
         <Typography className={styles.footer}>{props.data.summary}</Typography>
     </Box>
@@ -203,7 +234,7 @@ function ChangeLog(props: { title: string; revisions: GitRevision[] }) {
                 {show ? "Hide" : "Show"}
             </Button>
         </Box>
-        <Divider />
+        <Divider color="var(--tertiary)"/>
         <Box
             className="grid grid-cols-1 grid-rows-auto transition-all duration-300 overflow-hidden gap-md"
             style={{ maxHeight: show ? "500px" : 0 }}
@@ -223,7 +254,7 @@ function RevisionItem(props: { revision: GitRevision }) {
       <Box className={styles.changelog.revision.header}>
         <Typography className="font-subheader">{formatDate(props.revision.date)}</Typography>
         <Typography className="font-subtext text-[1.2em]">{props.revision.title}</Typography>
-        <Divider />
+        <Divider color="var(--tertiary)"/>
         <Link to={props.revision.url}>
           <Typography className="font-label text-[1em] hover:underline hover:text-(--tertiary)">{props.revision.id.substring(0, 7)}</Typography>
         </Link>

@@ -135,7 +135,7 @@ export const MarkdownStyle:Components = {
         <a className="font-body underline" {...props} />
     ),
     li: ({node, ...props}) => (
-        <li className="font-subtext" {...props} />
+        <li className="font-body" {...props} />
     ),
    table: ({ node, align, ...props }) => {
     const alignmentClass =
@@ -176,19 +176,24 @@ export const MarkdownStyle:Components = {
     ),
 
     td: ({ align, children, ...props }) => {
-    const alignStyle:any = align ? { textAlign: align } : {};
-    return (
-        <td
-        className="px-3 py-2 border-t border-(--secondary)"
-        style={alignStyle}
-        {...props}
-        >
-        {children}
-        </td>
-    );
+        const alignStyle:any = align ? { textAlign: align } : {};
+        return (
+            <td
+            className="px-3 py-2 border-t border-(--secondary)"
+            style={alignStyle}
+            {...props}
+            >
+            {children}
+            </td>
+        );
     },
 
+    ul: ({node, ...props}) => {
+        return <ul className="list-disc list-inside marker:text-(--primary) " {...props}/>
     }
+
+    }
+
     const styles = {
         caption: `inline-block font-body`, 
         p: `font-body`, 

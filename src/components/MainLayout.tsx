@@ -41,8 +41,8 @@ function HeaderLinkElement(props:HeaderLink & React.ComponentPropsWithoutRef<'a'
 
 export function PageHeader() {
     return <Box id="top" className={styles.pageHeader._}>
-        <Link to={"/"} className={`${styles.pageHeader.$}`}>Some Name</Link>
-        <Box className={styles.divider} />
+        <Link to={"/"} className={`${styles.pageHeader.$}`}>Kevin A.</Link>
+        <Divider color="var(--tertiary)" className={styles.divider} />
         {headerLinks.map((link, linkI) => <HeaderLinkElement className={`${styles.pageHeader.$}`} key={linkI} {...link}/>)}
         <ThemePicker className={styles.pageHeader.$} />
     </Box>
@@ -52,7 +52,7 @@ export function PageHeader() {
 export function PageFooter(){
     return <Box className={styles.pageFooter._}>
         {footerLinks.map((l, lI) => <Caption className={styles.pageFooter.$} key={lI} link={l.link} caption={l.label}>{<Box className="hover:fill-(--primary) fill-(--neutral-contrast)">{l.icon}</Box>}</Caption>)}
-        <Box className={styles.divider} />
+        <Divider color="var(--tertiary)" className={styles.divider} />
         <Typography className={styles.pageFooter.$}>© {new Date().getFullYear()} Kevin Akumuo - All rights reserved</Typography>
     </Box>
 }
@@ -61,7 +61,7 @@ export function PageFooter(){
 
 const styles = {
     // TODO: see why divider is not showing
-    divider: `self-center grow h-[0.25px] border border-(--neutral-contrast)/50`, 
+    divider: `self-center grow h-[0.25px]`, 
     container: `
         h-screen w-screen 
         pl-50 pr-50

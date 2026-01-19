@@ -57,7 +57,6 @@ type PortfolioClientResponse<T> = {
 
 type PostData = {
     postContent:string, 
-    previewImage?:string, 
     attachments?:string[]
 }
 

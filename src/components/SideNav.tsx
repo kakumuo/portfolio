@@ -40,11 +40,11 @@ export function SideNav(
     
 
     const ticks = React.useMemo(() => {
-        const MAX_TICK_COUNT = Math.max(Math.min(maxScrollY / 20,40) - rootElements.length, 1);
+        const MAX_TICK_COUNT = Math.max(Math.min(maxScrollY / 10,50) - rootElements.length, 1);
         const res:({type: 'sub', yPos:number} | ({type: 'main'} & SideNavElement))[] = []
         const tickSpacing = Math.max(maxScrollY, 1) / MAX_TICK_COUNT; 
 
-        console.log(tickSpacing); 
+        // console.log(tickSpacing); 
         
         if(rootElements.length > 0) 
             res.push({
@@ -128,17 +128,17 @@ export function SideNav(
 const styles = {
     _: `
         right-0 top-1/2 -translate-y-1/2 fixed 
-        pr-4 w-full max-w-[15vw] h-3/4
+        pr-4 w-full max-w-[15vw] max-h-8/9
         grid grid-cols-1 grid-rows-auto 
     `,
     tick: {
         _: `flex items-center gap-md group `,
         label: `font-subtext invisible opacity-0 group-hover:visible group-hover:opacity-100 transition text-(--neutral-contrast)`, 
-        tick: `h-px border-b border-b-4 w-1/4 ml-auto group-hover:w-full max-w-1/2 group-hover:border-b-5 rounded-full transition `,  
+        tick: `h-px border-b border-b-2 w-1/4 ml-auto group-hover:w-full max-w-1/2 group-hover:border-b-3 rounded-full transition `,  
     }, 
     subtick: {
         _: `cursor-pointer group h-3 w-1/8 hover:w-3/16 ml-auto flex transition`,
-        tick: `h-px border-b border-b-3 w-full transition group-hover:border-b-4 my-auto rounded-full transition`,  
+        tick: `h-px border-b border-b-1 w-full transition group-hover:border-b-2 my-auto rounded-full transition`,  
     },
     footer: `font-subtext tracking-widest text-center flex justify-between `, 
 }

@@ -1,9 +1,5 @@
 @import "tailwindcss";
 
-@utility card {
-  @apply shadow-[3px_3px_0px_var(--neutral-accent)] ; 
-}
-
 @utility font-title {
   @apply text-balance tracking-wider uppercase font-bold text-[30px];
   font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
@@ -15,7 +11,7 @@
 }
 
 @utility font-subheader {
-  @apply font-mono tracking-widest opacity-40;
+  @apply font-mono tracking-widest opacity-90;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; 
 }
 
@@ -181,7 +177,7 @@ anims
         --neutral: #161616;
         --neutral-accent: #3f3f3f;
         --neutral-contrast: #09ff00;
-        --primary: #007209;
+        --primary: #044b0a;
         --secondary: #014917;
         --tertiary: #bbffc4;
     }
@@ -197,7 +193,7 @@ anims
 
     .terminal-dark {
         --neutral: #161616;
-        --neutral-accent: #1dff09;
+        --neutral-accent: #8da08b;
         --neutral-contrast: #00ff00;
         --primary: #094e00;
         --secondary: #183d23;
@@ -242,7 +238,7 @@ anims
 
     .vboy-light {
         --neutral: #fcd1d5;
-        --neutral-accent: rgb(247, 197, 191);
+        --neutral-accent: rgb(252, 145, 133);
         --neutral-contrast: #252525;
         --primary: #f7533d;
         --secondary: #7a0202;

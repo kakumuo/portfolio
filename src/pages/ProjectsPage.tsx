@@ -209,7 +209,7 @@ export function ProjectsPage(){
     return <>{!loaded ? <LoadingPage  /> : <MainPage className={styles._}>
             <SectionHeader  title="Projects" />
             <SearchBar setFilters={setFilters} sortOptions={Object.values(SortOptionType)} setSort={setSort} />
-            <Divider />
+            <Divider color="var(--tertiary)"/>
             <Box className={styles.projectsSection}>
                 {filterData.map(proj => <Box><ProjectPreview className="flex flex-col p-sm grow gap-sm relative group h-auto peer" curProj={proj} /></Box>)}
             </Box>

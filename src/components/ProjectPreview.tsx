@@ -50,7 +50,7 @@ export function TechMakeupBar(props:React.ComponentPropsWithoutRef<'div'> & {mak
 }
 
 function TechMakeupLayer({layer}:{layer:MakeupLayer}) {
-    return <Box className={styles.TMB.layer._}>
+    return <Box key={layer.name} className={styles.TMB.layer._}>
         <Typography className={styles.TMB.layer.title}>{layer.name}</Typography>
         <Box 
             style={{gridTemplateColumns: layer.items.map(i => i.percentage + "fr").join(" ")}} 
@@ -58,7 +58,7 @@ function TechMakeupLayer({layer}:{layer:MakeupLayer}) {
         >
             {layer.items.map((i, iI) => {
                 return <>
-                        <Caption caption={`${i.tech} - ${i.percentage}%`}><Box key={`bar-${iI}`} className={`${styles.TMB.layer.row.top} border-(--secondary) bg-(--secondary)/25`} /></Caption>
+                        <Caption key={`caption-${iI}`} caption={`${i.tech} - ${i.percentage}%`}><Box key={`bar-${iI}`} className={`${styles.TMB.layer.row.top}`} /></Caption>
                         <Typography key={`text-${iI}`} className={styles.TMB.layer.row.bot}>{" // " + i.tech}</Typography>
                     </>
             })}
@@ -120,7 +120,7 @@ const styles = {
             title: `text-end text-[12px] font-subtext`, 
             row: {
                 _: `grid grid-rows-[auto_1fr] gap-1`, 
-                top: `row-start-1 h-2 w-full border odd:rounded`, 
+                top: `row-start-1 h-2 w-full border odd:rounded border-(--secondary) bg-(--secondary)/60`, 
                 bot: `row-start-2 text-end text-[10px] text-nowrap font-label`, 
             }
         }

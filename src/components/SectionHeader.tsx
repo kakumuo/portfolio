@@ -10,7 +10,7 @@ export function SectionHeader(props:{children?:any, title:string, more?:{label:s
                 <Link to={props.more.link}>[{props.more.label}]</Link>
             }
         </Box>
-        <Divider/>
+        <Divider color="var(--tertiary)"/>
         {props.children}
     </Box>
 }

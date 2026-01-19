@@ -176,14 +176,14 @@ export function HomePage(){
             // const blogRes = sampleBlogPosts.sort((a, b) => b.createDate - a.createDate).filter((_, i) => i < 3); 
             setFeaturedBlogData(blogRes); 
 
-            const projRes = sampleProjData.sort((a, b) => b.endDate - a.endDate).filter((_, i) => i < 3); 
-            // const projRes = projData.data.sort((a, b) => b.endDate - a.endDate).filter((_, i) => i < 3); 
+            const projRes = projData.data.sort((a, b) => b.endDate - a.endDate).filter((_, i) => i < 3); 
+            // const projRes = sampleProjData.sort((a, b) => b.endDate - a.endDate).filter((_, i) => i < 3); 
             setFeaturedProjData(projRes); 
 
             setLoaded(true); 
         })(); 
 
-        const taglines = ["everything", "something", "nothing"]
+        const taglines = ["apps", "games", "music", "clothing"]
         setTagline(taglines[0])
         const handle = setInterval(() => {
             setTagline(curTagline => {
@@ -216,7 +216,7 @@ function DisplayHeader(props:{label:string, to:string}){
     return <Box className={styles.displayHeader._}>
         <Box className={`${styles.displayHeader.indicator}`} />
         <Typography className={styles.displayHeader.title}>{props.label}</Typography>
-        <Divider />
+        <Divider color="var(--tertiary)"/>
         <Link to={props.to}><Button>View More</Button></Link>
     </Box>
 }
@@ -270,7 +270,7 @@ export function ProjectPreview({curProj, ...props}:React.ComponentPropsWithoutRe
             <Typography className='font-subheader'>// PROJ-{threeDigitCode(curProj.id)}</Typography>
             <Box className={styles.projDisplay.header._}>
                 <Typography className={styles.projDisplay.header.title}>{curProj.title}</Typography>
-                <Divider />
+                <Divider color="var(--tertiary)"/>
                 <Link className='z-2' to={curProj.git!}><Button disabled={curProj.git == null}>Git</Button></Link>
                 <Link className='z-2' to={curProj.url!}><Button disabled={curProj.url == null}>Site</Button></Link>
             </Box>
@@ -333,16 +333,16 @@ const styles = {
           list: `grid grid-cols-1 grid-rows-auto gap-md`, 
         },
         preview: {
-          _: `relative flex flex-col z-1 p-sm overflow-hidden group`,
-          img:`absolute left-1/2 top-1/2 -translate-1/2 -z-2 w-full h-auto objectfit-contain opacity-20`, 
+          _: `relative flex flex-col z-1 p-sm overflow-hidden group bg-(--neutral)/75`,
+          img:`absolute left-1/2 top-1/dd2 -translate-1/2 w-full h-auto objectfit-contain opacity-10`, 
           header:{
-            _: `flex items-center`, 
+            _: `flex items-center z-1`, 
             numLabel: `mr-auto font-subheader`, 
             indicator: `rounded-full h-2 aspect-1/1 border animate-pulse border-(--tertiary) bg-(--tertiary)`, 
           }, 
           title: `col-start-2 row-start-1 row-span-1 col-span-full flex items-center mt-auto mb-auto font-subtitle 
-          group-hover:italic group-hover:underline group-hover:text-(--tertiary)`, 
-          sub: `col-start-2 ro-start-2 row-span-1 col-span-full flex items-center`, 
+          group-hover:italic group-hover:underline group-hover:text-(--tertiary) z-1`, 
+          sub: `col-start-2 ro-start-2 row-span-1 col-span-full flex items-center z-1`, 
 
           sub_$:`
             first:mr-auto first:text-[14px] first:font-subtext

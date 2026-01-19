@@ -22,8 +22,9 @@ export function Button(props: React.ComponentPropsWithoutRef<"button">) {
   const styles = {
     _: `relative overflow-hidden px-5 py-1.5
       not-disabled:text-(--neutral-contrast)
-      not-disabled:hover:bg-(--primary)/50
+      not-disabled:hover:bg-(--primary)
       not-disabled:hover:cursor-pointer
+      not-disabled:shadow-[3px_3px_0px_rgb(from_var(--neutral-contrast)_r_g_b_/_0.5)]
 
       not-hover:bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,var(--primary)_2px,var(--primary)_10px)]
       not-hover:bg-repeat-x
@@ -33,9 +34,12 @@ export function Button(props: React.ComponentPropsWithoutRef<"button">) {
       disabled:bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,var(--neutral-accent)_2px,var(--neutral-accent)_10px)]
       disabled:bg-repeat-x
       disabled:animate-slide
+      disabled:text-(--neutral)
+      disabled:shadow-[3px_3px_0px_rgb(from_var(--neutral-accent)_r_g_b_/_0.25)]
 
       font-header 
-      card capitalize
+      
+      capitalize
     `,
   };
 
@@ -76,7 +80,7 @@ export function SearchBar(props:{sortOptions:string[], setFilters?:(filters:stri
         header: `flex gap-md items-center`, 
         footer: `flex gap-sm h-10 font-label text-[.75em]`, 
         tag: `border border-1 px-2 py-1 self-center hover:text-(--tertiary) hover:border-(--tertiary) transition cursor-pointer`, 
-        input: `grow h-10 border focus:border-(--tertiary) outline-none px-2 rounded-sm transition`, 
+        input: `grow h-10 border focus:border-(--secondary) outline-none px-2 rounded-sm transition`, 
     }
 
     return <Box className={styles._}>
@@ -118,14 +122,14 @@ export function SortDropdown(props:{options:string[], setSort?:(options:SortOpti
 
   const styles = {
     _: `
-      border focus-within:border-(--tertiary) outline-none rounded-sm
+      border focus-within:border-(--secondary) outline-none rounded-sm
       transition cursor-pointer
       h-10 px-2 p-1 w-50
       grid grid-cols-[auto_1fr] grid-rows-auto gap-md 
       items-center relative
     `, 
     icon: `fill-(--secondary)`, 
-    indicator: `text-center border px-2 aspect-1/1 rounded-sm text-(--secondary) border-(--secondary)`,
+    indicator: `text-center border px-2 aspect-1/1 rounded-sm text-(--tertiary) border-(--tertiary)`,
     input: `outline-none border-none p-0 peer`, 
     list: `
       absolute border w-full max-h-100 overflow-y-scroll
@@ -229,7 +233,8 @@ export function ThemePicker({className, ...props}:React.ComponentPropsWithoutRef
     onMouseEnter: (t:AppTheme) => {setTmpTheme(theme); setTheme(t)}, 
     onMouseLeave: () => {setTheme(tmpTheme)}, 
     onClick:      (t:AppTheme) => {
-      console.log(t); setTheme(t); setTmpTheme(t);
+      // console.log(t); 
+      setTheme(t); setTmpTheme(t);
       ref.current.blur(); 
     }
   }
