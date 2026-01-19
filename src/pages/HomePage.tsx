@@ -1,7 +1,7 @@
 import * as React from 'react'; 
 
 import { Box, Divider, Typography } from "@mantine/core";
-import { Button as Button } from '../components/Components';
+import { Button as Button, ProgressBar } from '../components/Components';
 import { MainPage } from "../components/MainPage";
 import { StatusGridCaption, TechMakeupBar } from "../components/ProjectPreview";
 import { AppContext } from "../app";
@@ -17,6 +17,48 @@ const sampleProjData:ProjectHeader[] = [
   {
     "id": "personal-site",
     "title": "Portfolio Site",
+    "summary": "A simple portfolio site",
+    "startDate": 12345677,
+    "endDate": 12345677,
+    "hasPost": true,
+    "git": "https://github.com/kakumuo/portfolio",
+    "url": "https://kakumuo.github.io/portfolio/",
+    "complexity": "medium",
+    "status": "inprogress",
+    "taskSize": "large",
+    "type": "web-app",
+    "makeupLayers": [
+      {
+        "name": "Frontend",
+        "items": [
+          {
+            "tech": "React",
+            "percentage": 1
+          }, 
+          {
+            "tech": "React 2",
+            "percentage": 30
+          }, 
+          {
+            "tech": "React 3",
+            "percentage": 40
+          }
+        ]
+      },
+      {
+        "name": "Backend",
+        "items": [
+          {
+            "tech": "GIT",
+            "percentage": 100
+          }
+        ]
+      }
+    ]
+  }, 
+  {
+    "id": "personal-site-2",
+    "title": "Portfolio Site-2",
     "summary": "A simple portfolio site",
     "startDate": 12345677,
     "endDate": 12345677,
@@ -170,24 +212,26 @@ export function HomePage(){
 }
 
 
-function DisplayHeader(props:{label:string, to:string, color:string}){
+function DisplayHeader(props:{label:string, to:string}){
     return <Box className={styles.displayHeader._}>
-        <Box className={`${styles.displayHeader.indicator} bg-orange-500 border-orange-500`} />
+        <Box className={`${styles.displayHeader.indicator}`} />
         <Typography className={styles.displayHeader.title}>{props.label}</Typography>
         <Divider />
         <Link to={props.to}><Button>View More</Button></Link>
     </Box>
 }
 
-const SHOW_DUR_MS = 5 * 1000; 
+const SHOW_DUR_MS = 10 * 1000; 
 function ProjectDisplay({projects}:{projects:ProjectHeader[]}){
     const [projI, setProjI] = React.useState(0); 
     const curProj = projects[projI]; 
-    const [curDur, setCurDur] = React.useState(0); 
+    const [hover, setHover] = React.useState(false); 
+    const hoverProps = {
+      onMouseEnter: () => setHover(true), 
+      onMouseLeave: () => setHover(false), 
+    }
 
     const nextProj = (inc:boolean) => {
-        setCurDur(0); 
-
         if(inc) {
             setProjI(val => (val + 1) % projects.length); 
         } else {
@@ -196,57 +240,52 @@ function ProjectDisplay({projects}:{projects:ProjectHeader[]}){
     }
 
     return <Box className={styles.projDisplay._}>
-        <DisplayHeader label='Project // Featured' color='orange' to='/projects' />
-        <ProjectPreview key={projI} curProj={curProj} />
+        <DisplayHeader label='Project // Featured' to='/projects' />
+        <ProjectPreview className={styles.projDisplay.main._} {...hoverProps} key={projI} curProj={curProj} />
         
-        <Box
-          className={styles.projDisplay.progress + " transition ease-in-out duration-300"} 
-          style={{
-            transition: 'ease-in',
-            backgroundImage: `linear-gradient(to right, black, black ${(curDur / SHOW_DUR_MS) * 100}%, transparent ${(curDur / SHOW_DUR_MS) * 100}%, transparent)`
-          }}
-        />
+        {projects.length > 1 && <ProgressBar pause={hover} className={styles.projDisplay.progress} durationMS={SHOW_DUR_MS} onAnimationIteration={() => nextProj(true)} />}
+
         <Box className={styles.projDisplay.footer._}>
-            <Button onClick={() => nextProj(false)} className={styles.projDisplay.footer.buttons}>{"prev"}</Button>
-            {projects.map((_, i) => <Box className={`${styles.projDisplay.footer.$} ${projI == i ? 'bg-black' : 'bg-white'}`} key={i} />)}
-            <Button onClick={() => nextProj(true)} className={styles.projDisplay.footer.buttons}>{"next"}</Button>
+            <Button disabled={projects.length <= 1} onClick={() => nextProj(false)} className={styles.projDisplay.footer.buttons}>{"prev"}</Button>
+            {projects.map((_, i) => <Box className={`${styles.projDisplay.footer.$} ${projI == i ? 'bg-(--neutral-contrast)' : 'bg-(--neutral)'}`} key={i} />)}
+            <Button disabled={projects.length <= 1} onClick={() => nextProj(true)} className={styles.projDisplay.footer.buttons}>{"next"}</Button>
         </Box>
     </Box>
 }
 
-export function ProjectPreview({curProj}:{curProj:ProjectHeader }){
-  return <Box className={styles.projDisplay.main._}>
-            <Link className='w-full h-full absolute top-0 left-0' to={`/projects/${curProj.id}`} />
-            <Box className='absolute w-full h-full top-0 left-0 bg-black/2 -z-1
+export function ProjectPreview({curProj, ...props}:React.ComponentPropsWithoutRef<'div'>&{curProj:ProjectHeader }){
+  return <Box {...props}>
+            <Link className='w-full h-full absolute top-0 left-0 z-1 peer' to={`/projects/${curProj.id}`} />
+            <Box className='absolute w-full h-full top-0 left-0
               transition duration-300 ease-in-out
-              bg-black/2 opacity-0
+              bg-(--neutral-contrast)/3 opacity-0
               group-hover:opacity-100
             '>
-              <Corners className='absolute top-0 left-0 stroke-black' corner='tl' />
-              <Corners className='absolute bottom-0 right-0 stroke-black' corner='br' />
+              <Corners className='absolute top-0 left-0 stroke-(--secondary)' corner='tl' />
+              <Corners className='absolute bottom-0 right-0 stroke-(--secondary)' corner='br' />
             </Box>
             <Typography className='font-subheader'>// PROJ-{threeDigitCode(curProj.id)}</Typography>
             <Box className={styles.projDisplay.header._}>
                 <Typography className={styles.projDisplay.header.title}>{curProj.title}</Typography>
                 <Divider />
-                <Link to={curProj.git!}><Button disabled={curProj.git == null}>Git</Button></Link>
-                <Link to={curProj.url!}><Button disabled={curProj.url == null}>Site</Button></Link>
+                <Link className='z-2' to={curProj.git!}><Button disabled={curProj.git == null}>Git</Button></Link>
+                <Link className='z-2' to={curProj.url!}><Button disabled={curProj.url == null}>Site</Button></Link>
             </Box>
 
             <Typography className={styles.projDisplay.main.summary}>{curProj.summary}</Typography>
 
             <Box className={styles.projDisplay.main.footer}>
-                <StatusGridCaption data={curProj} />
-                <TechMakeupBar makeup={curProj.makeupLayers} />
+                <StatusGridCaption className='z-2' data={curProj} />
+                <TechMakeupBar className='z-2' makeup={curProj.makeupLayers} />
             </Box>
         </Box>
 }
 
 function BlogDisplay({blogs}:{blogs:BlogHeader[]}) {
     return <Box className={styles.blogDisplay.display._}>
-         <DisplayHeader label='Blog // Featured' color='orange' to='/blog' />
+         <DisplayHeader label='Blog // Featured' to='/blog' />
          <Box className={styles.blogDisplay.display.list}>
-            {blogs.map((b, bI) => <BlogPreview key={bI} blog={b}/>)}
+            {blogs.map((b, bI) => <Box key={bI} ><BlogPreview blog={b}/></Box>)}
          </Box>
     </Box>
 }
@@ -261,17 +300,17 @@ export function BlogPreview({blog, showSummary}:{blog:BlogHeader, showSummary?:b
               absolute w-full h-full top-0 left-0
               transition duration-300 ease-in-out
               -z-12
-              bg-black/5 opacity-0
+              bg-(--neutral-contrast)/3 opacity-0
               group-hover:opacity-100
             `}
           >
-            <Corners className="absolute top-0 left-0 stroke-black" corner="tl" />
-            <Corners className="absolute bottom-0 right-0 stroke-black" corner="br" />
+            <Corners className="absolute top-0 left-0 stroke-(--secondary)" corner="tl" />
+            <Corners className="absolute bottom-0 right-0 stroke-(--secondary)" corner="br" />
           </Box>
           <img className={styles.blogDisplay.preview.img} src={blog.bannerImage} />        
           <Box className={styles.blogDisplay.preview.header._}>
             <Typography className={styles.blogDisplay.preview.header.numLabel}>//BLOG-{threeDigitCode(blog.id)}</Typography>
-            <Box className={styles.blogDisplay.preview.header.indicator} style={{borderColor: 'orange', backgroundColor: 'orange'}} />
+            <Box className={styles.blogDisplay.preview.header.indicator}/>
           </Box>
           <Typography style={{textDecoration: hover ? 'underline' : 'none'}} className={styles.blogDisplay.preview.title}>{blog.title}</Typography>
           <Box className={styles.blogDisplay.preview.sub}>
@@ -296,26 +335,27 @@ const styles = {
           header:{
             _: `flex items-center`, 
             numLabel: `mr-auto font-subheader`, 
-            indicator: `rounded-full h-2 aspect-1/1 border animate-pulse`, 
+            indicator: `rounded-full h-2 aspect-1/1 border animate-pulse border-(--tertiary) bg-(--tertiary)`, 
           }, 
-          title: `col-start-2 row-start-1 row-span-1 col-span-full flex items-center mt-auto mb-auto font-subtitle italic group-hover:text-orange-500`, 
+          title: `col-start-2 row-start-1 row-span-1 col-span-full flex items-center mt-auto mb-auto font-subtitle 
+          group-hover:italic group-hover:underline group-hover:text-(--tertiary)`, 
           sub: `col-start-2 ro-start-2 row-span-1 col-span-full flex items-center`, 
 
           sub_$:`
             first:mr-auto first:text-[14px] first:font-subtext
-            not-first:border not-first:bg-white not-first:pl-4 not-first:pr-4 not-first:font-label`, 
+            not-first:border not-first:pl-4 not-first:pr-4 not-first:font-label`, 
         }, 
         summary: `font-body text-[.8em]`, 
     },
 
     _: `h-full w-full flex flex-col gap-lg`,
-    tagline: `font-subheader`, 
-    body: `h-auto grid grid-cols-2 grid-rows-1 gap-md p-md my-auto border-b-2 border-dashed`, 
+    tagline: `font-subheader `, 
+    body: `h-auto grid grid-cols-2 grid-rows-1 gap-md p-md my-auto border-b-2 border-dashed border-(--neutral-contrast)`, 
     textheader: `pl-4 pr-4 font-body`, 
 
     displayHeader: {
         _: `grid grid-cols-[auto_auto_1fr_auto] items-center gap-sm`, 
-        indicator: `aspect-1/1 h-1/2 border animate-pulse`, 
+        indicator: `aspect-1/1 h-1/2 border animate-pulse border-(--primary) bg-(--primary)`, 
         title: `font-subheader`, 
     },
 
@@ -329,7 +369,7 @@ const styles = {
         progress: `grid flex h-2 border`,
         header: {
           _:  `grid grid-rows-1 grid-cols-[auto_1fr_auto_auto] items-center gap-sm`,
-          title: `font-subtitle group-hover:italic group-hover:underline group-hover:text-orange-500`, 
+          title: `font-subtitle group-hover:italic group-hover:underline group-hover:text-(--tertiary)`, 
         },
         footer: {
             _:  `flex items-center justify-center gap-sm`,

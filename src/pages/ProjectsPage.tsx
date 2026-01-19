@@ -211,7 +211,7 @@ export function ProjectsPage(){
             <SearchBar setFilters={setFilters} sortOptions={Object.values(SortOptionType)} setSort={setSort} />
             <Divider />
             <Box className={styles.projectsSection}>
-                {filterData.map(proj => <Box><ProjectPreview curProj={proj} /></Box>)}
+                {filterData.map(proj => <Box><ProjectPreview className="flex flex-col p-sm grow gap-sm relative group h-auto peer" curProj={proj} /></Box>)}
             </Box>
         </MainPage>}</>
     

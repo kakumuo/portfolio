@@ -1,15 +1,16 @@
 import * as React from 'react'
 import { Box, Divider, Skeleton, Typography } from "@mantine/core";
-import { data, Link, useLoaderData, useLocation, useNavigate, useParams } from "react-router";
+import { Link, useLocation, useNavigate, useParams } from "react-router";
 import { MainPage } from "../components/MainPage";
 import { StatusGridCaption, TechMakeupBar } from "../components/ProjectPreview";
-import { formatDate, resolvePreload, threeDigitCode } from '../components/Utils';
-import { type GitRevision, type ProjectHeader, type BlogHeader, type PostPageData, type Preload, type PostPageResponseData, type PostData } from '../components/types';
+import { formatDate, threeDigitCode } from '../components/Utils';
+import { type GitRevision, type ProjectHeader, type BlogHeader, type PostPageData, type Preload, type PostPageResponseData } from '../components/types';
 import { PortfolioClient } from '../components/PortfolioClient';
 import { StyledMarkdown } from '../components/MarkdownStyle';
 import { SideNav, type SideNavElement } from '../components/SideNav';
 import { Button } from '../components/Components';
 import { LoadingPage } from './LoadingPage';
+import { AppContext } from '../app';
 
 
 export function loadPostPage(client:PortfolioClient, data:Preload<PostPageResponseData>, isProject:boolean, id:string) {
@@ -29,7 +30,7 @@ export function PostPage() {
     const [loaded, setLoaded] = React.useState(false); 
     const [scrollY, setScrollY] = React.useState(0); 
     const mainRef = React.useRef<HTMLDivElement>(null!); 
-    const [client, _] = React.useState(new PortfolioClient()); 
+    const {client} = React.useContext(AppContext)
     const {id} = useParams()
     const location = useLocation();
 
@@ -38,54 +39,54 @@ export function PostPage() {
 
     React.useEffect(() => {
         ;(async() => {
-            // const [post, header, changelog, projchangelog] = await Promise.all([
-            //     (await fetch("/samplePost/post.md")).text(), 
-            //     (await fetch("/samplePost/projheader.json")).json(), 
-            //     (await fetch("/samplePost/changelog.json")).json(), 
-            //     (await fetch("/samplePost/changelog.json")).json()
-            // ]); 
+            const [post, header, changelog, projchangelog] = await Promise.all([
+                (await fetch("/samplePost/post.md")).text(), 
+                (await fetch("/samplePost/projheader.json")).json(), 
+                (await fetch("/samplePost/changelog.json")).json(), 
+                (await fetch("/samplePost/changelog.json")).json()
+            ]); 
 
-            // // console.log(post, header, changelog); 
-
-            // setPageData({
-            //     isProject: true, 
-            //     headerData: [header], 
-            //     postChangelog: changelog, 
-            //     projChangelog: projchangelog,
-            //     postData: {
-            //         postContent: post
-            //     }
-            // } as PostPageData)
-
-            const isProject = location.pathname.match(/\/projects\//) != null
-
-            console.log(isProject)
-
-            const [post, header, changelog, projChangelog] = await Promise.all([
-                client.getPostData({id: id!}), 
-                isProject ? client.getProjectHeader({ids: [id!]}) : client.getBlogHeader({ids: [id!]}), 
-                client.getPostChangelog({id: id!}),
-                client.getProjectChangelog({linkOrId: id!})
-            ]);
-
-            if(!post.success || !header.success || !changelog.success || (projChangelog && !projChangelog.success)) {
-                const tmp = [header, changelog, post]
-                if(projChangelog) tmp.push(projChangelog); 
-                const target = tmp.find(d => d.success == false)
-                navigate('/error', {
-                    replace: true, 
-                    state: target
-                })
-                return;
-            }
+            // console.log(post, header, changelog); 
 
             setPageData({
-                isProject: isProject, 
-                headerData: (header as any).data, 
-                postChangelog: (changelog as any).data, 
-                postData: (post as any).data, 
-                projChangelog: (projChangelog as any).data
-            })
+                isProject: true, 
+                headerData: [header], 
+                postChangelog: changelog, 
+                projChangelog: projchangelog,
+                postData: {
+                    postContent: post
+                }
+            } as PostPageData)
+
+            // const isProject = location.pathname.match(/\/projects\//) != null
+
+            // console.log(isProject)
+
+            // const [post, header, changelog, projChangelog] = await Promise.all([
+            //     client.getPostData({id: id!}), 
+            //     isProject ? client.getProjectHeader({ids: [id!]}) : client.getBlogHeader({ids: [id!]}), 
+            //     client.getPostChangelog({id: id!}),
+            //     client.getProjectChangelog({linkOrId: id!})
+            // ]);
+
+            // if(!post.success || !header.success || !changelog.success || (projChangelog && !projChangelog.success)) {
+            //     const tmp = [header, changelog, post]
+            //     if(projChangelog) tmp.push(projChangelog); 
+            //     const target = tmp.find(d => d.success == false)
+            //     navigate('/error', {
+            //         replace: true, 
+            //         state: target
+            //     })
+            //     return;
+            // }
+
+            // setPageData({
+            //     isProject: isProject, 
+            //     headerData: (header as any).data, 
+            //     postChangelog: (changelog as any).data, 
+            //     postData: (post as any).data, 
+            //     projChangelog: (projChangelog as any).data
+            // })
             setLoaded(true); 
         })();
 
@@ -136,18 +137,13 @@ export function PostPage() {
     return <>{!loaded ? <LoadingPage /> : <MainPage 
         ref={mainRef}
         className={styles._} >
-        {!pageData || !pageData.headerData || !pageData.postData ? 
-            <Skeleton variant='text' /> 
-            :<>
-                <SideNav rootElements={sideNavElements} scrollY={scrollY} parentRef={mainRef}/>
-                {pageData.isProject ? <ProjectBanner data={pageData.headerData[0] as ProjectHeader} />: <BlogBanner data={pageData.headerData[0] as BlogHeader} />}
-                <Divider className='mb-[5vh] invisible' />
-                <StyledMarkdown className='mb-[40vh]'>{pageData.postData.postContent}</StyledMarkdown>
-                <Divider className='mt-[5vh] mb-auto invisible' />
-                {pageData.isProject && <ChangeLog title='Project ChangeLog' revisions={pageData.projChangelog} />}
-                <ChangeLog title='Post ChangeLog' revisions={pageData.postChangelog} />
-            </>
-        }
+            <SideNav rootElements={sideNavElements} scrollY={scrollY} parentRef={mainRef}/>
+            {pageData.isProject ? <ProjectBanner data={pageData.headerData[0] as ProjectHeader} />: <BlogBanner data={pageData.headerData[0] as BlogHeader} />}
+            <Divider className='mb-[5vh] invisible' />
+            <StyledMarkdown className='mb-[40vh]'>{pageData.postData.postContent}</StyledMarkdown>
+            <Divider className='mt-[50vh] mb-auto invisible' />
+            {pageData.isProject && <ChangeLog title='Project ChangeLog' revisions={pageData.projChangelog} />}
+            <ChangeLog title='Post ChangeLog' revisions={pageData.postChangelog} />
     </MainPage>}</>
 }
 
@@ -203,7 +199,7 @@ function ChangeLog(props: { title: string; revisions: GitRevision[] }) {
     <Box className={styles.changelog.container}>
         <Box className={styles.changelog.header}>
             <Typography className="font-subtitle">{props.title}</Typography>
-            <Button onClick={() => setShow(!show)}>
+            <Button disabled={props.revisions.length == 0} onClick={() => setShow(!show)}>
                 {show ? "Hide" : "Show"}
             </Button>
         </Box>
@@ -229,7 +225,7 @@ function RevisionItem(props: { revision: GitRevision }) {
         <Typography className="font-subtext text-[1.2em]">{props.revision.title}</Typography>
         <Divider />
         <Link to={props.revision.url}>
-          <Typography className="font-label text-[1em] hover:underline">{props.revision.id.substring(0, 7)}</Typography>
+          <Typography className="font-label text-[1em] hover:underline hover:text-(--tertiary)">{props.revision.id.substring(0, 7)}</Typography>
         </Link>
       </Box>
       <StyledMarkdown className='px-8'>{props.revision.body}</StyledMarkdown>

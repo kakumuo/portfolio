@@ -40,7 +40,7 @@ export function SideNav(
     
 
     const ticks = React.useMemo(() => {
-        const MAX_TICK_COUNT = Math.max(Math.min(maxScrollY / 20,50) - rootElements.length, 1);
+        const MAX_TICK_COUNT = Math.max(Math.min(maxScrollY / 20,40) - rootElements.length, 1);
         const res:({type: 'sub', yPos:number} | ({type: 'main'} & SideNavElement))[] = []
         const tickSpacing = Math.max(maxScrollY, 1) / MAX_TICK_COUNT; 
 
@@ -96,20 +96,22 @@ export function SideNav(
                 let targetStyle:React.CSSProperties = {}; 
                 
                 if(tick.type === 'sub') {
-                    targetStyle.color = 'lightgray';
+                    targetStyle.color = 'var(--neutral-accent)';
                 }
 
-                if(tickI == closestI) targetStyle.color = 'orange'
-                else if (tickI < closestI) targetStyle.color = 'goldenrod'
+                if(tickI == closestI) targetStyle.color = 'var(--tertiary)'
+                else if (tickI < closestI) targetStyle.color = 'var(--neutral-accent)'
+                else if (tick.type == 'sub') targetStyle.color = 'var(--secondary)'
+                else targetStyle.color = 'var(--primary)'
                 
                 if(tick.type == 'main') return (
-                    <HashLink key={tick.yPos} to={tick.href} smooth className={styles.tick._} style={targetStyle}>
+                    <HashLink key={tickI} to={tick.href} smooth className={styles.tick._} style={targetStyle}>
                         <Typography className={styles.tick.label}>{tick.label}</Typography>
                         <Box className={styles.tick.tick} />
                     </HashLink>
                 )
                 else if (tick.type == 'sub') return (
-                    <Box onClick={() => handleSubClick(tick.yPos)} key={tick.yPos} className={styles.subtick._ + ` k-${tickI}-${tick.yPos}`}>
+                    <Box onClick={() => handleSubClick(tick.yPos)} key={tickI} className={styles.subtick._ + ` k-${tickI}-${tick.yPos}`}>
                         <Box className={styles.subtick.tick} style={targetStyle}/>
                     </Box>
                 )
@@ -118,8 +120,6 @@ export function SideNav(
         <Box className={styles.footer} key={scrollY}>
             <Typography>[</Typography>
             <Typography>{`${((scrollY / maxScrollY) * 100).toFixed(2).toString().padStart(6, "0")}%`}</Typography>
-            <Typography>//</Typography>
-            <Typography>{`${10}m`}</Typography>
             <Typography>]</Typography>
         </Box>
     </Box>
@@ -133,7 +133,7 @@ const styles = {
     `,
     tick: {
         _: `flex items-center gap-md group `,
-        label: `font-subtext invisible opacity-0 group-hover:visible group-hover:opacity-100 transition`, 
+        label: `font-subtext invisible opacity-0 group-hover:visible group-hover:opacity-100 transition text-(--neutral-contrast)`, 
         tick: `h-px border-b border-b-4 w-1/4 ml-auto group-hover:w-full max-w-1/2 group-hover:border-b-5 rounded-full transition `,  
     }, 
     subtick: {

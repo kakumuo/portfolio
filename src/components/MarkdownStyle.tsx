@@ -115,7 +115,7 @@ export const MarkdownStyle:Components = {
         return <Box className="max-w-1/2 mx-auto items-center flex flex-col">
             <Typography className="font-subtext text-[.9em]">{title}</Typography>
             <img {...props} title={title} alt={alt} className="max-h-[50vh]" />
-            <Typography className="font-subtext text-[.7em]">{alt}</Typography>
+            <Typography className="font-subtext text-[.7em] text-(--tertiary)">{alt}</Typography>
         </Box>
     }, 
 
@@ -160,7 +160,7 @@ export const MarkdownStyle:Components = {
         
         <tr>
         <td colSpan={"100%" as any}>
-            <div className="h-[2px] bg-gray-600 w-full"></div>
+            <div className="h-[2px] bg-(--primary) w-full"></div>
         </td>
         </tr>
     </thead>
@@ -179,7 +179,7 @@ export const MarkdownStyle:Components = {
     const alignStyle:any = align ? { textAlign: align } : {};
     return (
         <td
-        className="px-3 py-2 border-t border-gray-300"
+        className="px-3 py-2 border-t border-(--secondary)"
         style={alignStyle}
         {...props}
         >

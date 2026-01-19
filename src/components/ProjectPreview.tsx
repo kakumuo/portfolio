@@ -43,15 +43,13 @@ export function StatusGridCaption(props:{data:ProjectHeader, id?:string, classNa
     </Caption>
 }
 
-export function TechMakeupBar(props:{makeup:MakeupLayer[]}) {
-    return <Box className={styles.TMB._}>
+export function TechMakeupBar(props:React.ComponentPropsWithoutRef<'div'> & {makeup:MakeupLayer[]}) {
+    return <Box className={`${styles.TMB._} ${props.className}`}>
         {props.makeup.map((m, mI) => <TechMakeupLayer layer={m} key={mI} />)}
     </Box>
 }
 
 function TechMakeupLayer({layer}:{layer:MakeupLayer}) {
-    const colors = ['black', 'gray', 'lightgray', 'slate']
-
     return <Box className={styles.TMB.layer._}>
         <Typography className={styles.TMB.layer.title}>{layer.name}</Typography>
         <Box 
@@ -59,9 +57,8 @@ function TechMakeupLayer({layer}:{layer:MakeupLayer}) {
             className={styles.TMB.layer.row._ }
         >
             {layer.items.map((i, iI) => {
-                const targetColor = colors[iI % colors.length]; 
                 return <>
-                        <Box key={`bar-${iI}`} className={styles.TMB.layer.row.top} style={{backgroundColor: targetColor, color: targetColor}} />
+                        <Caption caption={`${i.tech} - ${i.percentage}%`}><Box key={`bar-${iI}`} className={`${styles.TMB.layer.row.top} border-(--secondary) bg-(--secondary)/25`} /></Caption>
                         <Typography key={`text-${iI}`} className={styles.TMB.layer.row.bot}>{" // " + i.tech}</Typography>
                     </>
             })}
@@ -122,8 +119,8 @@ const styles = {
             _: `grid grid-cols-1 grid-rows-[auto_1fr]`, 
             title: `text-end text-[12px] font-subtext`, 
             row: {
-                _: `grid grid-rows-[auto_1fr]`, 
-                top: `row-start-1 h-2 w-full border first:rounded-l-full [&:nth-last-child(2)]:rounded-r-full`, 
+                _: `grid grid-rows-[auto_1fr] gap-1`, 
+                top: `row-start-1 h-2 w-full border odd:rounded`, 
                 bot: `row-start-2 text-end text-[10px] text-nowrap font-label`, 
             }
         }

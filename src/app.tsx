@@ -14,9 +14,11 @@ import { ErrorPage } from './pages/ErrorPage';
 
 
 export type PreloadMap = {[key:string]:{data:any, retriveTime:number}}
-
+export type AppTheme = {themeClass:string, isDark:boolean}
 type AppContextData = {
-    client:PortfolioClient
+    client:PortfolioClient, 
+    theme: AppTheme,
+    setTheme:React.Dispatch<React.SetStateAction<AppTheme>>
 }
 
 export const AppContext = React.createContext(null! as AppContextData); 
@@ -24,6 +26,7 @@ export const AppContext = React.createContext(null! as AppContextData);
 //TODO: fix tailwind theme config
 export function App() {
     const [client, _] = React.useState(new PortfolioClient()); 
+    const [theme, setTheme] = React.useState<AppTheme>({themeClass: 'vaporwave', isDark: false})
 
     const router = React.useMemo(() => 
         createBrowserRouter([
@@ -39,11 +42,11 @@ export function App() {
         ])
     , []); 
 
-    return <AppContext value={{client}}>
-        <Box className={styles.container}
+    return <AppContext value={{client, theme, setTheme}}>
+        <Box className={styles.container + ` ${theme.themeClass + (theme.isDark ? '-dark' : '-light')}`}
             style={{
                 scrollbarWidth: 'thin', 
-                scrollbarColor: 'orange transparent',
+                scrollbarColor: 'var(--tertiary) transparent',
                 scrollbarGutter: 'stable'
             }}
         >
@@ -54,17 +57,11 @@ export function App() {
 
 const styles = {
     container: `
-        h-screen  w-screen px-[min(30vw,15%)] overflow-hidden
-        grid grid-cols-1 grid-rows-[auto_1fr]
+            h-screen  w-screen px-[min(30vw,15%)] overflow-hidden
+            grid grid-cols-1 grid-rows-[auto_1fr]
+            dark gap-8xl bg-(--neutral) text-(--neutral-contrast)
+            -z-100
         `,
-    pageHeader: {
-        container: `light w-full h-auto grid grid-cols-1 grid-rows-auto gap-sm bg-secondary`, 
-        header: `w-full flex gap-md text-primary`, 
-        footer: `w-full flex gap-md`
-    }, 
-    pageFooter: {
-        container: `grid grid-cols-1 grid-rows-auto`
-    }
 }
 
 

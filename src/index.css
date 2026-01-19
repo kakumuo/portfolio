@@ -1,10 +1,5 @@
 @import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
 @utility card {
   @apply shadow-[3px_3px_0px_rgba(0,0,0,0.03)] ; 
 }
@@ -35,7 +30,7 @@
 }
 
 @utility font-label {
-  @apply tracking-widest leading-relaxed font-mono text-[8px] opacity-50; 
+  @apply tracking-widest leading-relaxed font-mono text-[10px] opacity-50; 
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
@@ -44,6 +39,16 @@
   @apply font-bold tracking-tighter; 
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; 
 }
+
+@utility pause-animation {
+  animation-play-state: paused;
+}
+
+
+/*
+anims
+*/
+@keyframes fillBar {0% {width:0%}100% {width:100%}}
 
 @keyframes animatedBackground {
   from {
@@ -61,9 +66,8 @@
 }
 
 
-@layer utilities {
 
-  
+@layer utilities {
   /* Gap */
   .gap-xs {
     @apply gap-1;
@@ -116,44 +120,41 @@
   }
 }
 
-@layer utilities {
-  .scrollbar::-webkit-scrollbar {
-    width: 20px;
-    height: 20px;
-  }
-
-  .scrollbar::-webkit-scrollbar-track {
-    border-radius: 100vh;
-    background: #f7f4ed;
-  }
-
-  .scrollbar::-webkit-scrollbar-thumb {
-    background: #e0cbcb;
-    border-radius: 100vh;
-    border: 3px solid #f6f7ed;
-  }
-
-  .scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #c0a0b9;
-  }
-}
-
 @layer base {
-    :root, .light {
-        --neutral: #ffffff;
-        --neutral-accent: #3d4451;
-        --neutral-contrast: #000000;
-        --primary: #570df8;
-        --secondary: #f000b8;
+    :root, .vaporwave-light {
+        --neutral: #f6fdff;
+        --neutral-accent: #d3d3d3;
+        --neutral-contrast: #202020;
+        --primary: #ff60ea;
+        --secondary: #e4a3d5;
         --tertiary: #37cdbe;
     }
 
-    .dark {
-        --neutral: #2A303C;
-        --neutral-accent: #191d24;
-        --neutral-contrast: #a4abb8;
-        --primary: #6419e6;
-        --secondary: #d126a4;
+    .vaporwave-dark {
+        --neutral: #1f1f1f;
+        --neutral-accent: #3a3a3a;
+        --neutral-contrast: #f7f7f7;
+        --primary: #f709b7;
+        --secondary: #f066cb;
         --tertiary: #1fb2a6;
     }
+
+    .ocean-light {
+        --neutral: #f3fbfd;
+        --neutral-accent: #d4bea2;
+        --neutral-contrast: #1f2d30;
+        --primary: #4ac9f0;
+        --secondary: #95c6cf;
+        --tertiary: #5dd4d0;
+    }
+
+    .ocean-dark {
+        --neutral: #122326;
+        --neutral-accent: #1d383c;
+        --neutral-contrast: #f4f9fa;
+        --primary: #2eb8c5;
+        --secondary: #49d6df;
+        --tertiary: #94f6f3;
+    }
+
 }

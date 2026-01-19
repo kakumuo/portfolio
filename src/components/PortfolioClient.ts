@@ -145,10 +145,9 @@ export class PortfolioClient {
             const respArr = (resp.data as unknown) as (typeof resp.data)[]; 
 
             for(let cur of respArr) {
-                //TODO: add back
-                // if(cur.commit.message.match(/\[ignore\]/)) {
-                //     continue; 
-                // }
+                if(cur.commit.message.match(/\[ignore\]/)) {
+                    continue; 
+                }
 
                 let curCommit:GitRevision = {} as GitRevision; 
                 curCommit.id = cur.sha; 
@@ -204,10 +203,9 @@ export class PortfolioClient {
         const respArr = (resp.data as unknown) as (typeof resp.data)[]; 
         
         for(let cur of respArr) {
-            //TODO: add back
-            // if(cur.commit.message.match(/\[ignore\]/)) {
-            //     continue; 
-            // }
+            if(cur.commit.message.match(/\[ignore\]/)) {
+                continue; 
+            }
 
             let curCommit:GitRevision = {} as GitRevision; 
             curCommit.id = cur.sha; 

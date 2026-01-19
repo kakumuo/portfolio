@@ -74,7 +74,7 @@ export const Caption = (props:{caption?:any, link?:string} & React.ComponentProp
                     {props.children}
                 </Link>
                 : 
-                <span className={`cursor-${props.link ? 'pointer' : 'auto'} group-hover/caption:text-orange-500 transition`}>
+                <span className={`cursor-${props.link ? 'pointer' : 'auto'} group-hover/caption:text-(--primary) transition`}>
                     {props.children}
                 </span>
             }
@@ -88,10 +88,10 @@ export const Caption = (props:{caption?:any, link?:string} & React.ComponentProp
                         style={{left: xPos, top:yPos}}
                         ref={captionRef}
                     >
-                        <Corners className='absolute top-0 left-0 stroke-orange-500' corner='tl' />
-                        <Corners className='absolute top-0 right-0 stroke-orange-500' corner='tr' />
-                        <Corners className='absolute bottom-0 left-0 stroke-orange-500' corner='bl' />
-                        <Corners className='absolute bottom-0 right-0 stroke-orange-500' corner='br' />
+                        <Corners className='absolute top-0 left-0 stroke-(--secondary)' corner='tl' />
+                        <Corners className='absolute top-0 right-0 stroke-(--secondary)' corner='tr' />
+                        <Corners className='absolute bottom-0 left-0 stroke-(--secondary)' corner='bl' />
+                        <Corners className='absolute bottom-0 right-0 stroke-(--secondary)' corner='br' />
                         {props.caption}
                     </span>
             }
@@ -102,5 +102,5 @@ export const Caption = (props:{caption?:any, link?:string} & React.ComponentProp
 
 const styles = {
     container: `relative grid group/caption`, 
-    caption: `fixed z-100 grid grid-cols-auto grid-rows-auto p-2 px-4 bg-white/90 invisible group-hover/caption:visible group-hover/caption:opacity-100 opacity-0 transition`,
+    caption: `fixed z-3 grid grid-cols-auto grid-rows-auto p-2 px-4 bg-(--neutral)/90 invisible group-hover/caption:visible group-hover/caption:opacity-100 opacity-0 transition`,
 }
