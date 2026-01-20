@@ -1,4 +1,3 @@
-import { Box, Typography } from '@mantine/core';
 import * as React from 'react'
 import { Link } from 'react-router';
 import { Corners } from './Components';
@@ -6,32 +5,12 @@ import { Corners } from './Components';
 
 export const Caption = (props:{caption?:any, link?:string} & React.ComponentPropsWithoutRef<'span'>) => {
     const captionRef = React.useRef<HTMLDivElement>(null); 
-    const [pos, setPos] = React.useState({x:0, y:0});
     const [xPos, setXPos] = React.useState(0);
     const [yPos, setYPos] = React.useState(0);
-    const [hoverTimeout, setHoverTimeout] = React.useState(setTimeout(()=>{}, 1))
-    const HOVER_DELAY_MS = 1000 * .2
     const OFFSET = {x: 25, y: 25}; // Changed to numbers for easier calculations
 
-    const [isHover, setIsHover] = React.useState({val: false})
-    const [show, setShow] = React.useState(false); 
-
     const handleMouseEnter = (ev:React.MouseEvent) => { 
-        setIsHover({val: true})       
         updateCaptionPosition(ev.clientX, ev.clientY);
-        
-        clearTimeout(hoverTimeout)            
-        setHoverTimeout(setTimeout(() => {
-            if(!isHover.val)
-                setShow(true)
-        }, HOVER_DELAY_MS))
-
-    }
-
-    const handleMouseLeave = () => {
-        clearTimeout(hoverTimeout)   
-        setShow(false);
-        setIsHover({val: false})
     }
 
     const handleMouseMove = (ev:React.MouseEvent) => {        
@@ -64,7 +43,6 @@ export const Caption = (props:{caption?:any, link?:string} & React.ComponentProp
     return (
         <span className={`${props.className} ${styles.container}`}  
             onMouseEnter={handleMouseEnter} 
-            onMouseLeave={handleMouseLeave} 
             onMouseMove={handleMouseMove}
             id={props.id}
         >

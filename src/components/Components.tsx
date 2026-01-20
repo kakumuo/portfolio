@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mantine/core";
-import React, { type ChangeEventHandler } from "react";
+import React from "react";
 import { IconArrowDown, IconArrowUp, IconPalette } from "./Icons";
 import { Checkbox } from "@mantine/core";
 import { AppContext, type AppTheme } from "../app";

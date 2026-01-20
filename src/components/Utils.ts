@@ -1,4 +1,3 @@
-import type { Preload } from "./types";
 
 
 export function formatDate(date:Date|number, relative:boolean = false) {

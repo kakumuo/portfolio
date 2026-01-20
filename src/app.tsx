@@ -29,8 +29,8 @@ export function App() {
     const [theme, setTheme] = React.useState<AppTheme>({themeClass: 'normal', isDark: true})
 
     const router = React.useMemo(() => 
-        createBrowserRouter([
-            {path: "/", Component: MainLayout, children: [
+        createBrowserRouter(
+            [{path: "/", Component: MainLayout, children: [
                 {path: "/", Component: HomePage},
                 {path: '/projects' , Component: ProjectsPage},
                 {path: '/blog' , Component: BlogPage},
@@ -38,8 +38,11 @@ export function App() {
                 {path: '/blog/:id'  , Component: PostPage},
                 {path: '/error', Component: ErrorPage},
                 {path: '/*', Component: ErrorPage},
-            ]}
-        ])
+            ]}], 
+            {
+                basename: '/portfolio'
+            }
+        )
     , []); 
 
     return <AppContext value={{client, theme, setTheme}}>

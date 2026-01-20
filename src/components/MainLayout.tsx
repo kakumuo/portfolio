@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Typography } from "@mantine/core";
+import { Box, Divider, Typography } from "@mantine/core";
 import { Link, Outlet, useLocation } from "react-router";
 import { IconGithub, IconGoodReads, IconLeetCode, IconLinkedIn, IconMAL } from "./Icons";
 import { Caption } from "./Caption";

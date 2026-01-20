@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Box, Divider, Skeleton, Typography } from "@mantine/core";
+import { Box, Divider, Typography } from "@mantine/core";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
 import { MainPage } from "../components/MainPage";
 import { StatusGridCaption, TechMakeupBar } from "../components/ProjectPreview";

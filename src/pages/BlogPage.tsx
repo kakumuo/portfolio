@@ -10,52 +10,6 @@ import { LoadingPage } from "./LoadingPage"
 import { useNavigate } from "react-router"
 
 
-const sampleBlogPosts:BlogHeader[] = [
-  {
-    "id": "about-me",
-    "title": "About Me",
-    "createDate": 123432,
-    "summary": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi dolore omnis dignissimos adipisci doloremque necessitatibus culpa nisi nesciunt delectus?",
-    "tags": [
-      "info"
-    ], 
-    "bannerImage": "https://placehold.co/600x400/EEE/31343C"
-  }, 
-	{
-    "id": "kla-flee",
-    "title": "Another Post",
-    "createDate": 123432,
-    "summary": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Neque!",
-    "tags": [
-      "info"
-    ], 
-    "bannerImage": "https://placehold.co/600x400/EEE/31343C"
-  }, 
-    {
-    "id": "smabout-me",
-    "title": "Some Post",
-    "createDate": 123432,
-    "summary": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas, minus!",
-    "tags": [
-      "info"
-    ], 
-    "bannerImage": "https://placehold.co/600x400/EEE/31343C"
-  }, 
-  {
-    "id": "smabout-me",
-    "title": "Some Post",
-    "createDate": 123432,
-    "summary": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas, minus!",
-    "tags": [
-      "info"
-    ], 
-    "bannerImage": "https://placehold.co/600x400/EEE/31343C"
-  }
-]
-
-
-
-
 enum SortOptionType {
     TITLE = 'Name', 
     CREATE_DATE = 'Create Date'
