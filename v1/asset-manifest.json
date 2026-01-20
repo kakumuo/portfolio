@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "./static/css/main.c532ec24.css",
+    "main.js": "./static/js/main.d736dd3b.js",
+    "static/media/grain-texture.jpg": "./static/media/grain-texture.d2ef2c69fd033df742d5.jpg",
+    "index.html": "./index.html",
+    "main.c532ec24.css.map": "./static/css/main.c532ec24.css.map",
+    "main.d736dd3b.js.map": "./static/js/main.d736dd3b.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.c532ec24.css",
+    "static/js/main.d736dd3b.js"
+  ]
+}
