@@ -53,7 +53,7 @@ export function PageFooter(){
     return <Box className={styles.pageFooter._}>
         {footerLinks.map((l, lI) => <Caption className={styles.pageFooter.$} key={lI} link={l.link} caption={l.label}>{<Box className="hover:fill-(--primary) fill-(--neutral-contrast)">{l.icon}</Box>}</Caption>)}
         <Divider color="var(--tertiary)" className={styles.divider} />
-        <Typography className={styles.pageFooter.$}>© {new Date().getFullYear()} Kevin Akumuo - All rights reserved</Typography>
+        <Typography className={styles.pageFooter.$}>© {new Date().getFullYear()} Kevin Akumuo - All Rights Reserved</Typography>
     </Box>
 }
 

@@ -195,7 +195,7 @@ function BlogBanner(props:{data:BlogHeader, wordCount?:number}){
     const styles = {
         _: `grid  grid-rows-[auto_1fr_auto] gap-sm `, 
         header: `font-subheader grid grid-cols-[auto_1fr_auto] grid-rows-1 items-center gap-sm`, 
-        main: `relative  overflow-hidden grid grid-rows-2 p-md bg-(--neutral) border border-(--tertiary)`, 
+        main: `relative overflow-hidden grid grid-rows-2 p-md bg-(--neutral) border border-(--tertiary)`, 
         footer: `font-subheader italic text-right`, 
     }
 
@@ -265,7 +265,7 @@ function RevisionItem(props: { revision: GitRevision }) {
 }
 
 const styles = {
-    _: `gap-sm mb-12 overflow-y-scroll px-4 flex flex-col`, 
+    _: `gap-sm mb-12 overflow-y-scroll px-4 flex flex-col font-body`, 
     header: {
         container: `grid mt-12`, 
         head: `grid grid-cols-[auto_1fr_auto] grid-rows-1`, 

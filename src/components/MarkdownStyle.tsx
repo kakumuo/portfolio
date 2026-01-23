@@ -108,11 +108,11 @@ export const MarkdownStyle:Components = {
 
     em(props) {
         const {node, ...rest} = props
-        return <em {...rest} className="font-subtext text-[.7em]" />
+        return <em {...rest} />
     },
 
     img: ({node, children, title, alt, ...props}) => {
-        return <Box className="max-w-1/2 mx-auto items-center flex flex-col">
+        return <Box className="h-auto w-auto m-auto items-center flex flex-col">
             <Typography className="font-subtext text-[.9em]">{title}</Typography>
             <img {...props} title={title} alt={alt} className="max-h-[50vh]" />
             <Typography className="font-subtext text-[.7em] text-(--tertiary)">{alt}</Typography>
@@ -134,9 +134,7 @@ export const MarkdownStyle:Components = {
     a: ({node, ...props}) => (
         <a className="font-body underline" {...props} />
     ),
-    li: ({node, ...props}) => (
-        <li className="font-body" {...props} />
-    ),
+
    table: ({ node, align, ...props }) => {
     const alignmentClass =
         align === 'center' ? 'mx-auto text-center' :
@@ -189,8 +187,8 @@ export const MarkdownStyle:Components = {
     },
 
     ul: ({node, ...props}) => {
-        return <ul className="list-disc list-inside marker:text-(--primary) " {...props}/>
-    }
+        return <ul className="mx-8 list-disc marker:text-(--primary)" {...props}/>
+    }, 
 
     }
 
