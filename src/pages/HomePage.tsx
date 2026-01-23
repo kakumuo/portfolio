@@ -18,10 +18,11 @@ import { LoadingPage } from './LoadingPage';
 export function HomePage(){
     const {client} = React.useContext(AppContext); 
     const [overview, setOverview] = React.useState({} as PostData)
+    const [quote, setQuote] = React.useState({quote: "", quoter: ""} as {quote:string, quoter:string})
     const [featuredBlogData, setFeaturedBlogData] = React.useState([] as BlogHeader[]); 
     const [featuredProjData, setFeaturedProjData] = React.useState([] as ProjectHeader[]); 
     const [loaded, setLoaded] = React.useState(false); 
-    const [tagline, setTagline] = React.useState("")
+    // const [tagline, setTagline] = React.useState("")
     const navigate = useNavigate(); 
 
     React.useEffect(() => {      
@@ -40,7 +41,18 @@ export function HomePage(){
               })
               return; 
             }
-            setOverview(overviewData.data);          
+            setOverview(overviewData.data);       
+            
+            // get quotes
+            const quotePath = overviewData.data.attachments?.find(a => a.match(/quotes/))
+            try {
+                const quotesResp = await fetch(quotePath!); 
+                const quoteData = await quotesResp.json(); 
+                const seed = Math.round(Date.now() / (1000 * 60 * 60 * 24))
+                const targetQuote:{quote:string, quoter:string} = quoteData.data[seed % quoteData.data.length]
+                setQuote(targetQuote); 
+            }catch(e){}
+            
 
             const blogRes = blogData.data.sort((a, b) => b.createDate - a.createDate).filter((_, i) => i < 3); 
             // const blogRes = sampleBlogPosts.sort((a, b) => b.createDate - a.createDate).filter((_, i) => i < 3); 
@@ -52,30 +64,20 @@ export function HomePage(){
 
             setLoaded(true); 
         })(); 
-
-        const taglines = ["apps", "games", "music", "clothing"]
-        setTagline(taglines[0])
-        const handle = setInterval(() => {
-            setTagline(curTagline => {
-                const i = taglines.indexOf(curTagline); 
-                if(i >= 0) return taglines[(i + 1) % taglines.length]; 
-                return curTagline; 
-            })
-        }, 2000);
-
-        return () => {
-            clearInterval(handle); 
-        }
     }, []); 
 
     return <>{!loaded ? <LoadingPage /> :
     <MainPage className={styles._}>
-        <Typography className={styles.tagline}>creating // {tagline}</Typography>
         <Box className={styles.textheader}><StyledMarkdown >{overview.postContent}</StyledMarkdown></Box>
-
+        
         <Box className={styles.body}>
             <ProjectDisplay projects={featuredProjData} />
             <BlogDisplay blogs={featuredBlogData} />
+        </Box>
+
+        <Box className='opacity-80 italic flex-flex-col mb-auto'>
+            <Typography className='font-subheader text-right font-bold'>"{quote.quote}"</Typography>
+            <Typography className='font-subheader italic text-[.8em] text-right'>{quote.quoter}</Typography>
         </Box>
     </MainPage>
     }</>
@@ -204,7 +206,7 @@ const styles = {
         },
         preview: {
           _: `relative flex flex-col z-1 p-sm overflow-hidden group bg-(--neutral)/75`,
-          img:`absolute left-1/2 top-1/dd2 -translate-1/2 w-full h-auto objectfit-contain opacity-10`, 
+          img:`absolute left-1/2 top-1/dd2 -translate-1/2 w-full h-auto objectfit-contain opacity-10 group-hover:opacity-25`, 
           header:{
             _: `flex items-center z-1`, 
             numLabel: `mr-auto font-subheader`, 
@@ -222,9 +224,8 @@ const styles = {
     },
 
     _: `h-full w-full flex flex-col gap-lg`,
-    tagline: `font-subheader `, 
-    body: `h-auto grid grid-cols-2 grid-rows-1 gap-md p-md my-auto border-b-2 border-dashed border-(--neutral-contrast)`, 
-    textheader: `pl-4 pr-4 font-body`, 
+    body: `h-auto grid grid-cols-2 grid-rows-1 gap-md p-md my-auto`, 
+    textheader: `pl-4 pr-4 font-body mt-auto`, 
 
     displayHeader: {
         _: `grid grid-cols-[auto_auto_1fr_auto] items-center gap-sm`, 

@@ -113,7 +113,7 @@ export class PortfolioClient {
                     }); 
 
                     postData.postContent = atob(itemResp.data.content);  
-                } else if (item.name.match(/\.(png|jpg|jpeg|gif)$/) && item.download_url){
+                } else if (item.name.match(/\.(png|jpg|jpeg|gif|json)$/) && item.download_url){
                     if(!postData.attachments) postData.attachments = []
                     postData.attachments.push(item.download_url); 
                 }
