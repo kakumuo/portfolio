@@ -80,5 +80,8 @@ export const Caption = (props:{caption?:any, link?:string} & React.ComponentProp
 
 const styles = {
     container: `relative grid group/caption`, 
-    caption: `fixed z-3 grid grid-cols-auto grid-rows-auto p-2 px-4 bg-(--neutral)/90 invisible group-hover/caption:visible group-hover/caption:opacity-100 opacity-0 transition`,
+    caption: `
+        max-w-1/4
+        fixed z-3 grid grid-cols-auto grid-rows-auto p-2 px-4 bg-(--neutral)/90 invisible group-hover/caption:visible group-hover/caption:opacity-100 opacity-0 transition
+    `,
 }

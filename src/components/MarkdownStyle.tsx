@@ -106,6 +106,14 @@ export const MarkdownStyle:Components = {
         return <p  {...rest}>{textContent}</p>
     }, 
 
+    code(props){
+        const {node, ...rest} = props;
+        const style = `
+            bg-(--tertiary) px-[4px] py-[2px] rounded text-(--neutral)
+        `
+        return <code {...rest} className={style} />
+    }, 
+
     em(props) {
         const {node, ...rest} = props
         return <em {...rest} />
@@ -118,6 +126,8 @@ export const MarkdownStyle:Components = {
             <Typography className="font-subtext text-[.7em] text-(--tertiary)">{alt}</Typography>
         </Box>
     }, 
+
+
 
     h1: ({ node, children, ...props }) => (
     <h1 className="font-title pt-4" id={children?.toString().toLowerCase().replace(" ", '-')} {...props}>[{children}]</h1>
@@ -188,6 +198,10 @@ export const MarkdownStyle:Components = {
 
     ul: ({node, ...props}) => {
         return <ul className="mx-8 list-disc marker:text-(--primary)" {...props}/>
+    }, 
+
+    ol: ({node, ...props}) => {
+        return <ul className="mx-8 list-decimal marker:text-(--primary)" {...props}/>
     }, 
 
     }
