@@ -3,6 +3,7 @@ import { Caption } from "./Caption";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Box, Typography } from "@mantine/core";
+import { render as pele_render } from 'pele'
 
 export const StyledMarkdown = (props:{className?:string, children:string|undefined|null}) => {
     return <Markdown remarkPlugins={[remarkGfm]} components={MarkdownStyle}  children={props.children}/>
@@ -106,11 +107,29 @@ export const MarkdownStyle:Components = {
         return <p  {...rest}>{textContent}</p>
     }, 
 
+    pre(props) {
+        const { className, ...rest } = props;
+        return <pre className={`${className} bg-(--neutral) flex mx-auto`} {...rest} />
+    },
+
     code(props){
         const {node, ...rest} = props;
         const style = `
             bg-(--tertiary) px-[4px] py-[2px] rounded text-(--neutral)
         `
+        if(props.className == "language-mermaid") {
+            const chart_style = `
+                px-[4px] py-[2px] rounded text-(--neutral)
+                [--pele-bg:var(--secondary)]
+                [--pele-fg:var(--neutral)]
+                [--pele-line:var(--neutral-accent)]
+                [--pele-surface:var(--tertiary)]
+            `
+            const {svg} = pele_render(props.children as string)
+            console.log(svg)
+            return <code className={`${chart_style} ${props.className}`} dangerouslySetInnerHTML={{__html: svg}} />
+        }
+        
         return <code {...rest} className={style} />
     }, 
 
